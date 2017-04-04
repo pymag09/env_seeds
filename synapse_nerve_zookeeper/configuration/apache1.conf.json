@@ -1,0 +1,23 @@
+{                                                                                                                                                                                                                                                                               
+  "instance_id": "a1",                                                                                                                                        
+  "service_conf_dir": "/opt/smartstack/nerve/conf.d",
+  "services": {
+    "apache2": {
+      "host": "192.168.33.33",
+      "port": 80,
+      "reporter_type": "zookeeper",
+      "zk_hosts": ["192.168.33.11:2181"],
+      "zk_path": "/nerve/services",
+      "check_interval": 2,
+      "checks": [
+        {
+          "type": "http",
+          "uri": "/",
+          "timeout": 0.2,
+          "rise": 3,
+          "fall": 2
+        }
+      ]
+    }
+  }
+}

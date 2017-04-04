@@ -1,0 +1,51 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+ips = { "http1" => "192.168.33.33", "http2" => "192.168.33.44" }
+workers = ["http1", "http2"]
+
+Vagrant.configure(2) do |config|
+  config.vm.define "ZOO" do |zoo|
+    zoo.vm.box = "ubuntu/trusty64"
+    zoo.vm.network "private_network", ip: "192.168.33.11"
+    zoo.vm.hostname = "zookeeper"
+    zoo.vm.provider "virtualbox" do |v|
+       v.memory = 1024
+       #v.cpus = 2
+    end
+    zoo.vm.provision "shell", inline: <<-SHELL
+      sudo apt-get update
+      sudo apt-get install -y zookeeper
+      /usr/share/zookeeper/bin/zkServer.sh start
+    SHELL
+  end
+
+  workers.each do |service|
+    config.vm.define service do |s_conf|
+      s_conf.vm.box = "ubuntu/trusty64"
+      s_conf.vm.hostname = service
+      s_conf.vm.network "private_network", ip: ips[service]
+      s_conf.vm.provider "virtualbox" do |v|
+        v.memory = 1024
+        #v.cpus = 2
+      end
+      s_conf.vm.provision "shell", path: "provisioning/nerve.sh"
+    end
+  end
+
+  config.vm.define "LB" do |lb|
+    lb.vm.box = "ubuntu/trusty64"
+    lb.vm.network "private_network", ip: "192.168.33.22"
+    lb.vm.network "forwarded_port", guest: 3212, host: 63212
+    lb.vm.hostname = "lb"
+    lb.vm.provider "virtualbox" do |v|
+      v.memory = 1024
+      #v.cpus = 2
+    end
+    lb.vm.provision "shell", path: "provisioning/synapse.sh"
+  end
+end

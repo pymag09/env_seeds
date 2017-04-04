@@ -1,0 +1,6 @@
+1. Check LB status (actually haproxy status) please visit http://localhost:63212/
+2. Run this command to shutdown one apache vagrant ssh http1 -c "sudo service apache2 stop"
+3. Refresh http://localhost:63212/ page. Pay attention that haproxy config has been changed
+
+Synapse https://github.com/airbnb/synapse#discovery is service which use information from zookeeper to create proper haproxy configuration.
+When service fails, nerve deregister service, and synapse generate new haproxy config and restart haproxy.
