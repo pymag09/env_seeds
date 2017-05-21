@@ -37,7 +37,7 @@ run_flannel() {
     fi
   done
   source /var/run/flannel/subnet.env
-  if [[ ! "$(cat /etc/deafult/docker | md5sum)" == "$(echo 'DOCKER_OPTS=\"--ip-masq=false --iptables=false --bip=${FLANNEL_SUBNET} --mtu=${FLANNEL_MTU}\"' | md5sum)" ]]; then
+  if [[ ! "$(md5sum < /etc/deafult/docker)" == "$(echo 'DOCKER_OPTS=\"--ip-masq=false --iptables=false --bip=${FLANNEL_SUBNET} --mtu=${FLANNEL_MTU}\"' | md5sum)" ]]; then
     echo "DOCKER_OPTS=\"--ip-masq=false --iptables=false --bip=${FLANNEL_SUBNET} --mtu=${FLANNEL_MTU}\"" > /etc/default/docker
     service docker restart
   fi
@@ -80,6 +80,6 @@ update_install_pkg
 copy_k8s_bin
 enable_flannel
 run_flannel
-for c in $(docker ps | awk '{print$1}'); do docker stop $c; done
-for c in $(docker ps -a | awk '{print$1}'); do docker rm $c; done
+for c in $(docker ps | awk '{print$1}'); do docker stop "$c"; done
+for c in $(docker ps -a | awk '{print$1}'); do docker rm "$c"; done
 start_k8s_minion

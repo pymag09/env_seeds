@@ -40,8 +40,8 @@ run_flannel() {
     fi
   done
   source /var/run/flannel/subnet.env
-  src=$(cat /etc/deafult/docker | md5sum)
-  dst=$(echo 'DOCKER_OPTS=\"--ip-masq=false --iptables=false --bip=${FLANNEL_SUBNET} --mtu=${FLANNEL_MTU}\"' | md5sum)
+  src=$(md5sum < /etc/deafult/docker)
+  dst=$(echo "DOCKER_OPTS=\"--ip-masq=false --iptables=false --bip=${FLANNEL_SUBNET} --mtu=${FLANNEL_MTU}\"" | md5sum)
   if [[ ! "$src" == "$dst" ]]; then
     echo "DOCKER_OPTS=\"--ip-masq=false --iptables=false --bip=${FLANNEL_SUBNET} --mtu=${FLANNEL_MTU}\"" > /etc/default/docker
     service docker restart
@@ -106,15 +106,15 @@ start_k8s_master() {
 update_install_pkg
 etcd_config
 
-if [[ $(ps ax | grep etc[d] | wc -l) -gt 0 ]]; then
+if [[ $(pgrep -c etc[d]) -gt 0 ]]; then
   etcdctl set /coreos.com/network/config  '{ "Network": "10.1.0.0/16", "Backend": { "Type": "vxlan", "VNI": 1 }  }'
 fi
 if [[ ! -f /usr/bin/kubectl ]]; then
   wget -q -O /usr/bin/kubectl "http://storage.googleapis.com/kubernetes-release/release/v1.5.5/bin/linux/amd64/kubectl"
   chmod +x /usr/bin/kubectl
 fi
-for c in $(docker ps | awk '{print$1}'); do docker stop $c; done
-for c in $(docker ps -a | awk '{print$1}'); do docker rm $c; done
+for c in $(docker ps | awk '{print$1}'); do docker stop "$c"; done
+for c in $(docker ps -a | awk '{print$1}'); do docker rm "$c"; done
 
 
 #copy_k8s_bin
