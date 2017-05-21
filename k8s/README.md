@@ -6,7 +6,8 @@ Whole cluster is provisioned during vagrant up.
 
 ## IMPORTANT  
   Requires vagrant >1.8.1 because Ubuntu xenial doesn't use eth names for interfaces.
-
+  
+```
 .
 ├── etcd
 ├── kubernetes-dashboard.yaml
@@ -22,6 +23,7 @@ Whole cluster is provisioned during vagrant up.
 │   └── minion.sh
 ├── README
 └── Vagrantfile
+```
 
 ## How to use it.  
 * `vagrant up`  
