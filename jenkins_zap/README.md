@@ -1,8 +1,12 @@
 ## Security scan in delivery pipeline.
   
+Provisioning script contains all basic steps you need to complete, to get ready-to-use jenkins server.
+  
 ### What it is about:
+https://jenkins.io/index.html
 https://wiki.jenkins-ci.org/display/JENKINS/zap+plugin  
 https://www.owasp.org/index.php/OWASP_Zed_Attack_Proxy_Project
+https://wiki.jenkins-ci.org/display/JENKINS/Job+DSL+Plugin
   
 ### How to use.
 * vagrant up
