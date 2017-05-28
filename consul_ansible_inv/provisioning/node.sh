@@ -44,5 +44,3 @@ echo "Create consul service and start" && \
 systemctl enable /vagrant/services_config/consul.service && \
 systemctl start consul && \
 echo "DONE."
-
-echo "NEXT STEP"

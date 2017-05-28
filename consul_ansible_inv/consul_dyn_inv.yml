@@ -1,0 +1,9 @@
+---
+
+- hosts: web_servers
+  connection: local
+  tasks:
+    - name: test
+      debug:
+        msg: "value is {{ show }}"
+      when: show is defined
