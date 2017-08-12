@@ -1,11 +1,11 @@
 #!/bin/bash
 
 sys_update() {	
-	[[ ! -f /etc/updated ]] && apt update && touch /etc/updated	
+	[[ ! -f /etc/updated ]] && apt-get update && touch /etc/updated	
 }
 
 install_pkgs(){
-	apt install -y mc docker.io openjdk-8-jre daemon wget jq	
+	apt-get install -y mc docker.io openjdk-8-jre daemon wget jq	
 }
 
 download_install_jenkins(){

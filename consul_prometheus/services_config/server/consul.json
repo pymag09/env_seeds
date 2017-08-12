@@ -1,0 +1,11 @@
+{
+  "datacenter": "vagrant",
+  "data_dir": "/opt/consul/data",
+  "log_level": "INFO",
+  "server": true,
+  "bootstrap": true,
+  "encrypt": "cg8StVXbQJ0gPvMd9o7yrg==",
+  "advertise_addr": "192.168.1.165",
+  "client_addr": "0.0.0.0",
+  "ui": true
+}

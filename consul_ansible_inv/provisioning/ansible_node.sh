@@ -3,15 +3,15 @@
 consul_dir='/opt/consul'
 
 if [[ -f /etc/updated ]]; then
-  apt update && touch /etc/updated
+  sudo apt-get update && touch /etc/updated
 fi
-apt install -y wget mc unzip apache2 python python-pip python-openssl
+apt-get install -y wget mc unzip apache2 python python-pip python-openssl
 if [[ $(pip2 list | grep consu[l] | wc -l) -eq 0 ]]; then
   pip install --upgrade pip
   pip2 install python-consul
 fi
 if [[ $(pip2 list | grep ansibl[e] | wc -l) -eq 0 ]]; then
-	pip2 install ansible
+  pip2 install ansible
 fi
 
 localectl set-locale LANG=C
@@ -48,8 +48,9 @@ echo "DONE."
 [[ ! -h /etc/systemd/system/consul.service ]] && \
 echo "Create consul service" && \
 systemctl enable /vagrant/services_config/consul.service && \
-systemctl start consul && \
 echo "DONE."
+
+systemctl start consul
 
 [[ ! -f $consul_dir/consul.ini ]] && \
 echo "Copy consul dynamic inventory config" && \
@@ -69,5 +70,5 @@ ans_group=$(curl -XPUT --data "g1,g2" http://192.168.1.165:8500/v1/kv/ansible/gr
 echo $ans_var
 echo $ans_group
 if [[ ! "$ans_var" = "true" || ! "$ans_group" = "true" ]]; then
-	exit 1;
+  exit 1;
 fi

@@ -3,9 +3,9 @@
 consul_dir='/opt/consul'
 
 if [[ -f /etc/updated ]]; then
-    apt update && touch /etc/updated
+    apt-get update && touch /etc/updated
 fi
-apt install -y wget mc unzip apache2
+apt-get install -y wget mc unzip apache2
 
 [[ ! -d $consul_dir ]] && \
 echo "Create consul dir" && \
@@ -42,5 +42,6 @@ sudo chown -R nobody:nogroup /opt/consul
 [[ ! -h /etc/systemd/system/consul.service ]] && \
 echo "Create consul service and start" && \
 systemctl enable /vagrant/services_config/consul.service && \
-systemctl start consul && \
 echo "DONE."
+
+systemctl start consul

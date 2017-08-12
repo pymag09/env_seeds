@@ -1,0 +1,9 @@
+{
+  "service": {
+    "name": "node_exporter",
+    "tags": ["prometheus"],
+    "address": "",
+    "port": 9100,
+    "enableTagOverride": false
+  }
+}

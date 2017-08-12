@@ -5,9 +5,9 @@ TIMEOUT=10
 
 update_install_pkg() {
   if [[ ! -f /etc/kube_update ]]; then
-    apt update && touch /etc/kube_update
+    apt-get update && touch /etc/kube_update
   fi
-  apt install -y mc docker.io git make
+  apt-get install -y mc docker.io git make
 }
 install_flannel() {
   if [[ ! -f /opt/flannel/dist/flanneld-amd64 ]]; then

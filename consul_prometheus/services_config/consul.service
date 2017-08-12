@@ -1,0 +1,9 @@
+[Unit]
+Description=Consul
+After=network.target
+
+[Service]
+User=nobody
+Group=nogroup
+WorkingDirectory=/opt/consul
+ExecStart=/bin/sh -c '/opt/consul/consul agent -config-dir=/etc/consul.d > /opt/consul/consul.log'

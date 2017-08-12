@@ -6,9 +6,9 @@ TIMEOUT=10
 
 update_install_pkg() {
   if [[ ! -f /etc/kube_update ]]; then
-    apt update && touch /etc/kube_update
+    apt-get update && touch /etc/kube_update
   fi
-    apt install -y mc docker.io git make etcd
+    apt-get install -y mc docker.io git make etcd
 }
 etcd_config() {
   src=$(md5sum /vagrant/etcd)
