@@ -1,0 +1,9 @@
+[Unit]
+Description=Prometheus
+After=network.target
+
+[Service]
+User=nobody
+Group=nogroup
+WorkingDirectory=/opt/prometheus/PROMETHEUS-SWISS-KNIFE-EXPORTER
+ExecStart=/bin/sh -c '/opt/prometheus/PROMETHEUS-SWISS-KNIFE-EXPORTER/swiss_knife_exporter.py > /opt/prometheus/PROMETHEUS-SWISS-KNIFE-EXPORTER/swiss_knife__exporter.log'

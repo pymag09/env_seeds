@@ -32,3 +32,4 @@ scrape_configs:
         services:
           - node_exporter
           - consul_exporter
+          - swiss_knife_exporter
