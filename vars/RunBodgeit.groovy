@@ -2,6 +2,7 @@ package pymag.dsl
 
 import pymag.dsl.Docker
 
+@NonCPS
 def call() {
     def dockeris=new Docker().IsDockerInstalled
     echo "BUILDING....${dockeris}"
