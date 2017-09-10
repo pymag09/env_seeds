@@ -1,9 +1,0 @@
-[Unit]
-Description=Prometheus
-After=network.target
-
-[Service]
-User=nobody
-Group=nogroup
-WorkingDirectory=/opt/prometheus/consul_exporter
-ExecStart=/bin/sh -c '/opt/prometheus/consul_exporter/consul_exporter -consul.server=http://192.168.1.165:8500 > /opt/prometheus/consul_exporter.log'

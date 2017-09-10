@@ -1,9 +1,0 @@
-{
-  "service": {
-    "name": "consul_exporter",
-    "tags": ["prometheus"],
-    "address": "",
-    "port": 9107,
-    "enableTagOverride": false
-  }
-}

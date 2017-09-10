@@ -1,9 +1,0 @@
-[Unit]
-Description=Prometheus
-After=network.target
-
-[Service]
-User=nobody
-Group=nogroup
-WorkingDirectory=/opt/prometheus/node_exporter
-ExecStart=/bin/sh -c '/opt/prometheus/node_exporter/node_exporter > /opt/prometheus/node_exporter.log'

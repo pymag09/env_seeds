@@ -1,9 +1,0 @@
-{
-  "service": {
-    "name": "swiss_knife_exporter",
-    "tags": ["prometheus"],
-    "address": "",
-    "port": 9111,
-    "enableTagOverride": false
-  }
-}

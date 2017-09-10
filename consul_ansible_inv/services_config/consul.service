@@ -1,9 +1,0 @@
-[Unit]
-Description=Consul
-After=network.target
-
-[Service]
-User=nobody
-Group=nogroup
-WorkingDirectory=/opt/consul
-ExecStart=/opt/consul/consul agent -config-file=/etc/consul.d/consul.conf -config-dir=/etc/consul.d
