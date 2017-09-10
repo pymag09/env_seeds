@@ -9,6 +9,7 @@ def call() {
     //if (dockeris) {
         node {
             stage("Build bodgeit") {
+                echo "BUILDING..."
                 git url: "https://github.com/psiinon/bodgeit.git"
                 sh 'mkdir -p $WORKSPACE/build/WEB-INF/classes'
                 withAnt(installation: 'ant-latest') {
