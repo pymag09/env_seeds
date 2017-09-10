@@ -10,9 +10,9 @@ def call(body) {
     body.delegate = config
     body()
 
-    def dockeris=new Docker().IsDockerInstalled
-    println "BUILDING...."
-    if (dockeris) {
+//    def dockeris=new Docker().IsDockerInstalled
+//    println "BUILDING...."
+//    if (dockeris) {
         node {
             stage("Build bodgeit") {
                 echo "BUILDING..."
@@ -27,6 +27,6 @@ def call(body) {
                 sh 'docker run -d -v /var/lib/jenkins/workspace/bodgeit/build/bodgeit.war:/usr/local/tomcat/webapps/bodgeit.war --name bodgeit -p 8181:8080 tomcat'
             }
         }
-    } else { println "Docker is not installed"}
+    //} else { println "Docker is not installed"}
 
 }
