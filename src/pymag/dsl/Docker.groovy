@@ -1,17 +1,16 @@
 package pymag.dsl
 
-class IsDockerInstalled implements Serializable {
-	private boolean check
+class Docker implements Serializable {
+	boolean IsDockerInstalled
 
-	IsDockerInstalled(){
-		this.check=false
-		Check()
+	Docker(){
+		this.IsDockerInstalled=false
+		CheckDockerInstalled()
 	}
-
-	def getCheck(){
-		return this.check
+	def getIsDockerInstalled(){
+		return this.IsDockerInstalled
 	}
-	private void Check(){
+	private void CheckDockerInstalled(){
 		def sout = new StringBuilder()
 		def serr = new StringBuilder()
 		def proc = 'sudo docker info'.execute()
@@ -24,7 +23,7 @@ class IsDockerInstalled implements Serializable {
 				[(key_val.first()):key_val.last()]
 			}
 			echo "Docker version: ${info["Server Version"]}"
-			this.check=true
+			this.IsDockerInstalled=true
 		} else {
 			echo serr
 		}

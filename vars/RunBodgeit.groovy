@@ -1,7 +1,7 @@
 package pymag.dsl
 
 def call() {
-    if (new IsDockerInstalled().check) {
+    if (new Docker.IsDockerInstalled) {
 
         git url: "https://github.com/psiinon/bodgeit.git"
         sh 'mkdir -p $WORKSPACE/build/WEB-INF/classes'
