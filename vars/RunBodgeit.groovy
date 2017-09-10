@@ -6,7 +6,7 @@ import pymag.dsl.Docker
 def call() {
     def dockeris=new Docker().IsDockerInstalled
     println "BUILDING...."
-    node() {
+    stage("Build and put into container") {
         if (dockeris) {
             echo "BUILDING..."
             git url: "https://github.com/psiinon/bodgeit.git"
