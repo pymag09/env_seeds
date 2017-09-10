@@ -5,9 +5,9 @@ import pymag.dsl.Docker
 @NonCPS
 def call() {
     stage("Build and put into container") {
-        def dockeris = new Docker().IsDockerInstalled
-        println "BUILDING...."
-        if (dockeris) {
+//        def dockeris = new Docker().IsDockerInstalled
+//        println "BUILDING...."
+//        if (dockeris) {
             echo "BUILDING..."
             git url: "https://github.com/psiinon/bodgeit.git"
             sh 'mkdir -p $WORKSPACE/build/WEB-INF/classes'
@@ -15,9 +15,9 @@ def call() {
                 sh:
                 ant build test
             }
-        } else {
-            println "Docker is not installed"
-        }
+//        } else {
+//            println "Docker is not installed"
+//        }
     }
     stage("Run container") {
         def dockeris = new Docker().IsDockerInstalled
