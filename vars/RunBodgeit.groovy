@@ -13,7 +13,7 @@ def call(body) {
 //    def dockeris=new Docker().IsDockerInstalled
 //    println "BUILDING...."
 //    if (dockeris) {
-        node {
+//        node {
             stage("Build bodgeit") {
                 echo "BUILDING..."
                 git url: "https://github.com/psiinon/bodgeit.git"
@@ -26,7 +26,7 @@ def call(body) {
             stage("Create container") {
                 sh 'docker run -d -v /var/lib/jenkins/workspace/bodgeit/build/bodgeit.war:/usr/local/tomcat/webapps/bodgeit.war --name bodgeit -p 8181:8080 tomcat'
             }
-        }
+        //}
     //} else { println "Docker is not installed"}
 
 }
