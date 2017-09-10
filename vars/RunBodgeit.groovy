@@ -4,7 +4,6 @@ import pymag.dsl.Docker
 
 @NonCPS
 def call() {
-
     stage("Build and put into container") {
         def dockeris = new Docker().IsDockerInstalled
         println "BUILDING...."
