@@ -6,7 +6,7 @@ import pymag.dsl.Docker
 def call() {
     stage("Build and put into container") {
         echo "GIT"
-        git url: "https://github.com/psiinon/bodgeit.git"
+        git branch: 'master', url: 'https://github.com/psiinon/bodgeit.git'
         echo "MKDIR"
         sh 'mkdir -p $WORKSPACE/build/WEB-INF/classes'
         echo "ANT"
