@@ -2,7 +2,7 @@ package pymag.dsl
 
 import pymag.dsl.Docker
 
-@NoCPS
+@NonCPS
 def call(body) {
 
     def config = [:]
