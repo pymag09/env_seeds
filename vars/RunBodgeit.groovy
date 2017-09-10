@@ -5,9 +5,11 @@ import pymag.dsl.Docker
 @NonCPS
 def call() {
     stage("Build and put into container") {
-        echo "BUILDING..."
+        echo "GIT"
         git url: "https://github.com/psiinon/bodgeit.git"
+        echo "MKDIR"
         sh 'mkdir -p $WORKSPACE/build/WEB-INF/classes'
+        echo "ANT"
         withAnt(installation: 'ant-latest') {
             sh:
             ant build test
