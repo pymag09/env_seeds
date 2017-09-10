@@ -23,8 +23,10 @@ class IsDockerInstalled implements Serializable {
 				def key_val=it.split(": ")
 				[(key_val.first()):key_val.last()]
 			}
-			println("Docker version: ${info["Server Version"]}")
+			echo "Docker version: ${info["Server Version"]}"
 			this.check=true
+		} else {
+			echo serr
 		}
 	}
 }
