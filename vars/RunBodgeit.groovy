@@ -4,9 +4,9 @@ import pymag.dsl.Docker
 
 @NonCPS
 def call() {
-    //def dockeris=new Docker().IsDockerInstalled
+    def dockeris=new Docker().IsDockerInstalled
     println "BUILDING...."
-    //if (dockeris) {
+    if (dockeris) {
         node {
             stage("Build bodgeit") {
                 echo "BUILDING..."
@@ -21,6 +21,6 @@ def call() {
                 sh 'docker run -d -v /var/lib/jenkins/workspace/bodgeit/build/bodgeit.war:/usr/local/tomcat/webapps/bodgeit.war --name bodgeit -p 8181:8080 tomcat'
             }
         }
-    //} else { echo "Docker is not installed"}
+    } else { println "Docker is not installed"}
 
 }

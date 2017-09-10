@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="6f855a4d-ee3b-407f-a32c-695001bf60c0" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/pymag/dsl/Docker.groovy" afterPath="$PROJECT_DIR$/src/pymag/dsl/Docker.groovy" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vars/RunBodgeit.groovy" afterPath="$PROJECT_DIR$/vars/RunBodgeit.groovy" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -21,21 +22,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="Docker.groovy" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Docker.groovy" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/pymag/dsl/Docker.groovy">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="36">
-              <caret line="2" column="12" lean-forward="false" selection-start-line="2" selection-start-column="6" selection-end-line="2" selection-end-column="12" />
+            <state relative-caret-position="468">
+              <caret line="26" column="16" lean-forward="true" selection-start-line="26" selection-start-column="16" selection-end-line="26" selection-end-column="16" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="RunBodgeit.groovy" pinned="false" current-in-tab="true">
+      <file leaf-file-name="RunBodgeit.groovy" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/vars/RunBodgeit.groovy">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="198">
-              <caret line="11" column="33" lean-forward="false" selection-start-line="11" selection-start-column="33" selection-end-line="11" selection-end-column="33" />
+            <state relative-caret-position="180">
+              <caret line="10" column="28" lean-forward="true" selection-start-line="10" selection-start-column="28" selection-end-line="10" selection-end-column="28" />
               <folding />
             </state>
           </provider>
@@ -62,8 +63,8 @@
         <option value="$PROJECT_DIR$/vars/isdockerexist.groovy" />
         <option value="$PROJECT_DIR$/vars/IsDockerInstalled.groovy" />
         <option value="$PROJECT_DIR$/src/pymag/dsl/docker.groovy" />
-        <option value="$PROJECT_DIR$/src/pymag/dsl/Docker.groovy" />
         <option value="$PROJECT_DIR$/vars/RunBodgeit.groovy" />
+        <option value="$PROJECT_DIR$/src/pymag/dsl/Docker.groovy" />
       </list>
     </option>
   </component>
@@ -494,7 +495,14 @@
       <option name="project" value="LOCAL" />
       <updated>1505051725989</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="test shared library">
+      <created>1505051886804</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1505051886804</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TodoView">
@@ -554,18 +562,18 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/pymag/dsl/Docker.groovy">
+    <entry file="file://$PROJECT_DIR$/vars/RunBodgeit.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="36">
-          <caret line="2" column="12" lean-forward="false" selection-start-line="2" selection-start-column="6" selection-end-line="2" selection-end-column="12" />
+        <state relative-caret-position="180">
+          <caret line="10" column="28" lean-forward="true" selection-start-line="10" selection-start-column="28" selection-end-line="10" selection-end-column="28" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/vars/RunBodgeit.groovy">
+    <entry file="file://$PROJECT_DIR$/src/pymag/dsl/Docker.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="11" column="33" lean-forward="false" selection-start-line="11" selection-start-column="33" selection-end-line="11" selection-end-column="33" />
+        <state relative-caret-position="468">
+          <caret line="26" column="16" lean-forward="true" selection-start-line="26" selection-start-column="16" selection-end-line="26" selection-end-column="16" />
           <folding />
         </state>
       </provider>
