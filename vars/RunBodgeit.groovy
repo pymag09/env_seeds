@@ -1,5 +1,7 @@
 package pymag.dsl
 
+import pymag.dsl.Docker
+
 def call() {
     if (new Docker.IsDockerInstalled) {
 
