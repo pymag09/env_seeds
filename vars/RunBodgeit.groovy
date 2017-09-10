@@ -4,7 +4,7 @@ import pymag.dsl.Docker
 
 @NonCPS
 def call() {
-    def dockeris=new Docker().IsDockerInstalled
+    //def dockeris=new Docker().IsDockerInstalled
     println "BUILDING....${dockeris}"
     //if (dockeris) {
         node {
