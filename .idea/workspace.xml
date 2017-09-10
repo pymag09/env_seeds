@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="6f855a4d-ee3b-407f-a32c-695001bf60c0" name="Default" comment="test shared library">
+    <list default="true" id="6f855a4d-ee3b-407f-a32c-695001bf60c0" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vars/RunBodgeit.groovy" afterPath="$PROJECT_DIR$/vars/RunBodgeit.groovy" />
     </list>
@@ -34,8 +34,8 @@
       <file leaf-file-name="RunBodgeit.groovy" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/vars/RunBodgeit.groovy">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="504">
-              <caret line="28" column="18" lean-forward="false" selection-start-line="28" selection-start-column="18" selection-end-line="28" selection-end-column="18" />
+            <state relative-caret-position="162">
+              <caret line="9" column="4" lean-forward="false" selection-start-line="9" selection-start-column="4" selection-end-line="9" selection-end-column="4" />
               <folding />
             </state>
           </provider>
@@ -606,7 +606,14 @@
       <option name="project" value="LOCAL" />
       <updated>1505060529264</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="test shared library">
+      <created>1505061443387</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1505061443387</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="TodoView">
@@ -676,8 +683,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/vars/RunBodgeit.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="504">
-          <caret line="28" column="18" lean-forward="false" selection-start-line="28" selection-start-column="18" selection-end-line="28" selection-end-column="18" />
+        <state relative-caret-position="162">
+          <caret line="9" column="4" lean-forward="false" selection-start-line="9" selection-start-column="4" selection-end-line="9" selection-end-column="4" />
           <folding />
         </state>
       </provider>
