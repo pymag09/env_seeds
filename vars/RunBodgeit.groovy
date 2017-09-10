@@ -3,8 +3,9 @@ package pymag.dsl
 import pymag.dsl.Docker
 
 def call() {
-    if (new Docker().IsDockerInstalled) {
-        echo "BUILDING...."
+    def dockeris=new Docker().IsDockerInstalled
+    echo "BUILDING....${dockeris}"
+    if (dockeris) {
         node {
             stage("Build bodgeit") {
                 git url: "https://github.com/psiinon/bodgeit.git"
