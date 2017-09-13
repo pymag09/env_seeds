@@ -11,6 +11,7 @@ def call() {
                   branches: [[name: '*/master']],
                   doGenerateSubmoduleConfigurations: false,
                   extensions: [[$class: 'CleanCheckout']],
+                  clean: false,
                   submoduleCfg: [],
                   userRemoteConfigs: [[credentialsId: 'git-credentials', url: 'https://github.com/psiinon/bodgeit.git']]
         ])
