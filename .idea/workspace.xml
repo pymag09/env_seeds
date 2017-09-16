@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="6f855a4d-ee3b-407f-a32c-695001bf60c0" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vars/RunBodgeit.groovy" afterPath="$PROJECT_DIR$/vars/RunBodgeit.groovy" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -718,7 +717,14 @@
       <option name="project" value="LOCAL" />
       <updated>1505592398544</updated>
     </task>
-    <option name="localTasksCounter" value="48" />
+    <task id="LOCAL-00048" summary="test shared library">
+      <created>1505592620802</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1505592620802</updated>
+    </task>
+    <option name="localTasksCounter" value="49" />
     <servers />
   </component>
   <component name="TodoView">
