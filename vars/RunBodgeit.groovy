@@ -18,7 +18,7 @@ def call() {
             echo "MKDIR"
             sh 'mkdir -p $WORKSPACE/build/WEB-INF/classes'
             echo "ANT"
-            withAnt(installation: 'ant-latest') {
+            steps.withAnt(installation: 'ant-latest') {
                 sh:
                 ant build test
             }
