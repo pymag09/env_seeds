@@ -16,11 +16,6 @@ class Docker implements Serializable {
 		def sout = new StringBuilder()
 		def serr = new StringBuilder()
 		def proc = 'sudo docker info'.execute()
-		def whoami = 'whoami'.execute()
-
-		whoami.consumeProcessOutput(sout, serr)
-		whoami.waitForOrKill(1000)
-		println sout
 
 		proc.consumeProcessOutput(sout, serr)
 		proc.waitForOrKill(1000)
@@ -29,10 +24,11 @@ class Docker implements Serializable {
 				def key_val=it.split(": ")
 				[(key_val.first()):key_val.last()]
 			}
-			println "Docker version: ${info["Server Version"]}"
+			//println "Docker version: ${info["Server Version"]}"
 			this.IsDockerInstalled=true
-		} else {
-			println serr
 		}
+//        else {
+//			println serr
+//		}
 	}
 }
