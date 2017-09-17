@@ -1,6 +1,6 @@
 package pymag.dsl
 
-@NonCPS
+
 class Docker implements Serializable {
 	boolean IsDockerInstalled
 
@@ -11,7 +11,8 @@ class Docker implements Serializable {
 	def getIsDockerInstalled(){
 		return this.IsDockerInstalled
 	}
-	private void CheckDockerInstalled(){
+    @NonCPS
+    private void CheckDockerInstalled(){
 		def sout = new StringBuilder()
 		def serr = new StringBuilder()
 		def proc = 'sudo docker info'.execute()
