@@ -11,7 +11,8 @@ def call() {
             sh 'mkdir -p $WORKSPACE/build/WEB-INF/classes'
             echo "ANT"
             withAnt(installation: 'pipeline-ant') {
-                sh 'ant build test'
+                //sh 'ant build test'
+                sh 'ant build'
             }
         }
         stage("Run container") {
