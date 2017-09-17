@@ -12,7 +12,7 @@ def call() {
             echo "ANT"
             withAnt(installation: 'pipeline-ant') {
                 //sh 'ant build test'
-                sh 'ant build'
+                sh 'ant build test'
             }
         }
         stage("Run container") {
