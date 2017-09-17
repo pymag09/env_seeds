@@ -3,7 +3,7 @@ package com.pymag.dsl
 
 class Docker implements Serializable {
 	boolean IsDockerInstalled
-    def containerName
+    String containerName
     Map<String, String> dockerInfo
 
 	Docker(){
@@ -11,7 +11,7 @@ class Docker implements Serializable {
         this.containerName=""
 		CheckDockerInstalled()
 	}
-    Docker(container){
+    Docker(String container){
         this.IsDockerInstalled=false
         this.containerName=container
         CheckDockerInstalled()
@@ -34,9 +34,7 @@ class Docker implements Serializable {
 
     @NonCPS
     private void CheckDockerInstalled() {
-        String d_comm_res
-
-        d_comm_res = DockerExecCommand("docker info")
+        String d_comm_res = DockerExecCommand("docker info")
         if (!d_comm_res.isEmpty()) {
             dockerInfo = d_comm_res.
                     split("\\r?\\n").
