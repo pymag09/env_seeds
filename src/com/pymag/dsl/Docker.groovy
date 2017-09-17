@@ -42,7 +42,7 @@ class Docker implements Serializable {
                     [(key_val.first()): key_val.last()]
                 }
             //this.IsDockerInstalled = true
-        }
+        //}
     }
 
     @NonCPS
