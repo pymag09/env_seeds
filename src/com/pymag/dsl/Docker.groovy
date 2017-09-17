@@ -1,4 +1,4 @@
-package pymag.dsl
+package com.pymag.dsl
 
 
 class Docker implements Serializable {

@@ -1,6 +1,6 @@
-package pymag.dsl
+package com.pymag.dsl
 
-import pymag.dsl.Docker
+import com.pymag.dsl.Docker
 
 def call() {
     node {
