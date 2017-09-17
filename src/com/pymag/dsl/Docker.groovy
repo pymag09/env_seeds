@@ -25,7 +25,7 @@ class Docker implements Serializable {
     private String DockerExecCommand(String command){
         def sout = new StringBuilder()
         def serr = new StringBuilder()
-        def proc = 'sudo ${command}'.execute()
+        def proc = "sudo ${command}".execute()
 
         proc.consumeProcessOutput(sout, serr)
         proc.waitForOrKill(1000)
