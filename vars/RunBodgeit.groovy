@@ -15,7 +15,7 @@ def call() {
             }
         }
         stage("Run container") {
-            def dockeris = new Docker().IsDockerInstalled
+            def dockeris = new Docker("bodgeit").IsDockerInstalled
             if (dockeris)
                 sh 'sudo docker run -d -v $WORKSPACE/bodgeit/build/bodgeit.war:/usr/local/tomcat/webapps/bodgeit.war --name bodgeit -p 8181:8080 tomcat'
             else
