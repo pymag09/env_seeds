@@ -3,6 +3,7 @@ package com.pymag.dsl
 import com.pymag.dsl.Docker
 
 def call() {
+    Docker d = new Docker(this, "bodgeit") //.IsDockerInstalled
     node {
         stage("Build and put into container") {
             echo "GIT"
@@ -15,10 +16,7 @@ def call() {
             }
         }
         stage("Run container") {
-            def docker_is = new Docker(this, "bodgeit").IsDockerInstalled
-            echo "${docker_is}"
-            if (docker_is)
-                sh 'sudo docker run -d -v $WORKSPACE/bodgeit/build/bodgeit.war:/usr/local/tomcat/webapps/bodgeit.war --name bodgeit -p 8181:8080 tomcat'
+            sh 'sudo docker run -d -v $WORKSPACE/bodgeit/build/bodgeit.war:/usr/local/tomcat/webapps/bodgeit.war --name bodgeit -p 8181:8080 tomcat'
         }
     }
 }
