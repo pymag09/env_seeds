@@ -15,11 +15,7 @@ class Docker implements Serializable {
 		return this.IsDockerInstalled
 	}
 
-    boolean getIsContainerRunning(){
-        return this.IsDockerInstalled
-    }
-
-    @NonCPS
+    //NonCPS
     private String DockerExecCommand(String command){
         def sout = new StringBuilder()
         def serr = new StringBuilder()
