@@ -29,7 +29,7 @@ class Docker implements Serializable {
 
         proc.consumeProcessOutput(sout, serr)
         proc.waitForOrKill(1000)
-        return proc.exitValue() ? null : sout.toString()
+        return proc.exitValue() ? "" : sout.toString()
     }
 
     @NonCPS
