@@ -12,6 +12,7 @@ class Docker implements Serializable {
 		return this.IsDockerInstalled
 	}
 
+    @NonCPS
     private void CheckDockerInstalled(){
 		def sout = new StringBuilder()
 		def serr = new StringBuilder()
