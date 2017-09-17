@@ -6,8 +6,7 @@ class Docker implements Serializable {
 
 	Docker(){
 		this.IsDockerInstalled=false
-		//CheckDockerInstalled()
-        println "DDDDDDDDDDDDDDDDDDDDDDDDD"
+		CheckDockerInstalled()
 	}
 	def getIsDockerInstalled(){
 		return this.IsDockerInstalled
