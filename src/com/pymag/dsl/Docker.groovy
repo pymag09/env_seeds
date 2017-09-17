@@ -43,7 +43,7 @@ class Docker implements Serializable {
                         def key_val = it.split(": ")
                         [(key_val.first()): key_val.last()]
                     }
-            IsDockerInstalled = true
+            this.IsDockerInstalled = true
         }
     }
 
