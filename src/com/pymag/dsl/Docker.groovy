@@ -26,24 +26,22 @@ class Docker implements Serializable {
 
         proc.consumeProcessOutput(sout, serr)
         proc.waitForOrKill(1000)
-        return proc.exitValue() ? "" : sout.toString()
+        assert proc.exitValue() : "Docker is not installed"
+        return sout.toString()
     }
 
     @NonCPS
     private void CheckDockerInstalled() {
         String d_comm_res = DockerExecCommand("docker info")
-        if (!d_comm_res.isEmpty()) {
-            dockerInfo = d_comm_res.
-                    split("\\r?\\n").
-                    each { it.trim() }.
-                    collectEntries {
-                        def key_val = it.split(": ")
-                        [(key_val.first()): key_val.last()]
-                    }
+//        if (!d_comm_res.isEmpty()) {
+        dockerInfo = d_comm_res.
+                split("\\r?\\n").
+                each { it.trim() }.
+                collectEntries {
+                    def key_val = it.split(": ")
+                    [(key_val.first()): key_val.last()]
+                }
             //this.IsDockerInstalled = true
-        } else {
-            steps.echo "Docker is not installed"
-            assert this.IsDockerInstalled==true
         }
     }
 
