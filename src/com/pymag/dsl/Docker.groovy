@@ -15,7 +15,7 @@ class Docker implements Serializable {
 		return this.IsDockerInstalled
 	}
 
-    //NonCPS
+    @NonCPS
     private String DockerExecCommand(String command){
         def sout = new StringBuilder()
         def serr = new StringBuilder()
@@ -26,6 +26,7 @@ class Docker implements Serializable {
         return !proc.exitValue() ? sout.toString() : null
     }
 
+    @NonCPS
     private void CheckDockerInstalled() {
         def dcommres = DockerExecCommand("docker info")
         if (dcommres) {
@@ -40,6 +41,7 @@ class Docker implements Serializable {
         }
     }
 
+    @NonCPS
     boolean IsContainerRunnig(){
         if (DockerExecCommand("docker ps -f \"name=${containerName}\" -q"))
             return true
