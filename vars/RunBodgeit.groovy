@@ -11,10 +11,10 @@ def call() {
             echo "MKDIR"
             sh 'mkdir -p $WORKSPACE/build/WEB-INF/classes'
             echo "ANT"
-            def antTool = tool 'pipeline-ant'
-            sh '${antTool}/bin/ant build test'
+            withAnt(installation: 'pipeline-ant') {
+                sh 'ant build test'
             }
-
+        }
         stage("Run container") {
             def dockeris = new Docker().IsDockerInstalled
             if (dockeris)
