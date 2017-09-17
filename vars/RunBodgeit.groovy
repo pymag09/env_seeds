@@ -8,19 +8,11 @@ def call() {
         stage("Build and put into container") {
             echo "GIT"
             git branch: 'master', url: 'https://github.com/psiinon/bodgeit.git'
-            //        checkout([$class: 'GitSCM',
-            //                  branches: [[name: '*/master']],
-            //                  doGenerateSubmoduleConfigurations: false,
-            //                  extensions: [[$class: 'CleanCheckout']],
-            //                  submoduleCfg: [],
-            //                  userRemoteConfigs: [[credentialsId: 'git-credentials', url: 'https://github.com/psiinon/bodgeit.git']]
-            //        ])
             echo "MKDIR"
             sh 'mkdir -p $WORKSPACE/build/WEB-INF/classes'
             echo "ANT"
-            steps.withAnt(installation: 'ant-latest') {
-                sh:
-                ant build test
+            withAnt(installation: 'pipeline-ant') {
+                sh 'ant build test'
             }
         }
         stage("Run container") {
