@@ -16,7 +16,8 @@ def call() {
             }
         }
         stage("Run container") {
-            sh 'sudo docker run -d -v $WORKSPACE/bodgeit/build/bodgeit.war:/usr/local/tomcat/webapps/bodgeit.war --name bodgeit -p 8181:8080 tomcat'
+            if (d.IsContainerRunnig())
+                sh 'sudo docker run -d -v $WORKSPACE/bodgeit/build/bodgeit.war:/usr/local/tomcat/webapps/bodgeit.war --name bodgeit -p 8181:8080 tomcat'
         }
     }
 }

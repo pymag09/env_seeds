@@ -38,7 +38,7 @@ class Docker implements Serializable {
 
     @NonCPS
     boolean IsContainerRunnig(){
-        if (!DockerExecCommand("docker ps -f \"name=${containerName}\" -q").isEmpty())
+        if (DockerExecCommand("docker ps -f \"name=${containerName}\" -q").isEmpty())
             return true
     }
 }
