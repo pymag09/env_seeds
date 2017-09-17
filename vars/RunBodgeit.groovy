@@ -14,7 +14,7 @@ def call() {
             def antTool = tool 'pipeline-ant'
             sh '${antTool}/bin/ant build test'
             }
-        }
+
         stage("Run container") {
             def dockeris = new Docker().IsDockerInstalled
             if (dockeris)
