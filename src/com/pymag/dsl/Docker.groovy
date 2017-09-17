@@ -4,11 +4,9 @@ package com.pymag.dsl
 class Docker implements Serializable {
     String containerName
     Map<String, String> dockerInfo
-    def steps
 
-    Docker(steps, String container){
+    Docker(String container){
         this.containerName=container
-        this.steps=steps
         CheckDockerInstalled()
     }
 

@@ -3,7 +3,7 @@ package com.pymag.dsl
 import com.pymag.dsl.Docker
 
 def call() {
-    Docker d = new Docker(this, "bodgeit") //.IsDockerInstalled
+    Docker d = new Docker("bodgeit")
     node {
         stage("Build and put into container") {
             echo "GIT"
