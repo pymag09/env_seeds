@@ -29,14 +29,13 @@ class Docker implements Serializable {
 
         proc.consumeProcessOutput(sout, serr)
         proc.waitForOrKill(1000)
-        println(sout)
-        return !proc.exitValue() ? sout.toString() : null
+        return proc.exitValue() ? null :sout.toString()
     }
 
     @NonCPS
     private void CheckDockerInstalled() {
         def dcommres = DockerExecCommand("docker info")
-        if (dcommres) {
+        if (!dcommres.isEmpty()) {
             dockerInfo = dcommres.
                     split("\\r?\\n").
                     each { it.trim() }.
@@ -50,7 +49,7 @@ class Docker implements Serializable {
 
     @NonCPS
     boolean IsContainerRunnig(){
-        if (DockerExecCommand("docker ps -f \"name=${containerName}\" -q"))
+        if (!DockerExecCommand("docker ps -f \"name=${containerName}\" -q").isEmpty())
             return true
     }
 }
