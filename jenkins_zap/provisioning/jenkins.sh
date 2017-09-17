@@ -12,6 +12,7 @@ download_install_jenkins(){
 	echo "jenkins download"
 	[[ ! -f /root/jenkins.deb ]] && wget -O /root/jenkins.deb "https://pkg.jenkins.io/debian-stable/binary/jenkins_2.7.4_all.deb"
 	[[ $(apt-cache show jenkins | grep -c "ok installed") -eq 0 ]] && dpkg -i /root/jenkins.deb	
+	[[ ! -f /etc/sudoers.d/jenkins]] && echo "jenkins ALL=(ALL) NOPASSWD:ALL"
 }
 
 prepare_plugins_and_workspace(){
@@ -50,7 +51,7 @@ change_pwd_install_plugins(){
 
 	if [[ ! -f /var/lib/jenkins/wizard_completed ]]; then
 	 curl --user "admin:$2" -d "$crumb_pass_reset" --data-urlencode "script=$(< /vagrant/provisioning/groovy/setpasswd.groovy)" http://localhost:8080/scriptText && \
-	 curl -k -L -XPOST --user "admin:admin" -H "Content-Type: application/json" -H "$crumb_plugin" -d "{\"dynamicLoad\": true,  \"plugins\": [\"cloudbees-folder\", \"antisamy-markup-formatter\", \"build-timeout\", \"credentials-binding\", \"timestamper\", \"ws-cleanup\", \"ant\", \"gradle\", \"workflow-aggregator\", \"github-organization-folder\", \"pipeline-stage-view\", \"git\", \"subversion\", \"ssh-slaves\", \"matrix-auth\", \"pam-auth\", \"ldap\", \"email-ext\", \"mailer\", \"custom-tools-plugin\", \"htmlpublisher\", \"zap\", \"job-dsl\", \"authorize-project\"] }" http://localhost:8080/pluginManager/installPlugins && \
+	 curl -k -L -XPOST --user "admin:admin" -H "Content-Type: application/json" -H "$crumb_plugin" -d "{\"dynamicLoad\": true,  \"plugins\": [\"cloudbees-folder\", \"antisamy-markup-formatter\", \"build-timeout\", \"credentials-binding\", \"timestamper\", \"ws-cleanup\", \"ant\", \"gradle\", \"workflow-aggregator\", \"github-organization-folder\", \"pipeline-stage-view\", \"git\", \"subversion\", \"ssh-slaves\", \"matrix-auth\", \"pam-auth\", \"ldap\", \"email-ext\", \"mailer\", \"custom-tools-plugin\", \"htmlpublisher\", \"zap\", \"job-dsl\", \"authorize-project\", \"pipeline\"] }" http://localhost:8080/pluginManager/installPlugins && \
 	 touch /var/lib/jenkins/wizard_completed
 	fi	
 }
