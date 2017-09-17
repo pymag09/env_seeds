@@ -5,15 +5,12 @@ class Docker implements Serializable {
 	boolean IsDockerInstalled
     String containerName
     Map<String, String> dockerInfo
+    def steps
 
-	Docker(){
-		this.IsDockerInstalled=false
-        this.containerName=""
-		CheckDockerInstalled()
-	}
-    Docker(String container){
+    Docker(steps, String container){
         this.IsDockerInstalled=false
         this.containerName=container
+        this.steps=steps
         CheckDockerInstalled()
     }
 
@@ -29,6 +26,7 @@ class Docker implements Serializable {
 
         proc.consumeProcessOutput(sout, serr)
         proc.waitForOrKill(1000)
+        steps.echo "${sout}"
         return proc.exitValue() ? "" : sout.toString()
     }
 
