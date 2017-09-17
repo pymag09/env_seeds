@@ -6,11 +6,17 @@ class Docker implements Serializable {
     def containerName
     Map<String, String> dockerInfo
 
-	Docker(container){
+	Docker(){
 		this.IsDockerInstalled=false
-        this.containerName=container
+        this.containerName=""
 		CheckDockerInstalled()
 	}
+    Docker(container){
+        this.IsDockerInstalled=false
+        this.containerName=container
+        CheckDockerInstalled()
+    }
+
 	boolean getIsDockerInstalled(){
 		return this.IsDockerInstalled
 	}
