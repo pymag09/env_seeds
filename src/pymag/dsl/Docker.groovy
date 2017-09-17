@@ -1,5 +1,6 @@
 package pymag.dsl
 
+@NonCPS
 class Docker implements Serializable {
 	boolean IsDockerInstalled
 
