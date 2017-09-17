@@ -26,7 +26,9 @@ class Docker implements Serializable {
 
         proc.consumeProcessOutput(sout, serr)
         proc.waitForOrKill(1000)
-        steps.echo "${sout}"
+        steps.echo "Command: ${proc}"
+        steps.echo "Error: ${serr}"
+        steps.echo "Exec status: ${proc.exitValue()}"
         return proc.exitValue() ? "" : sout.toString()
     }
 
