@@ -3,33 +3,49 @@ package com.pymag.dsl
 
 class Docker implements Serializable {
 	boolean IsDockerInstalled
+    def containerName
+    Map<String, String> dockerInfo
 
-	Docker(){
+	Docker(container){
 		this.IsDockerInstalled=false
+        this.containerName=container
 		CheckDockerInstalled()
 	}
 	boolean getIsDockerInstalled(){
 		return this.IsDockerInstalled
 	}
 
-    @NonCPS
-    private void CheckDockerInstalled(){
-		def sout = new StringBuilder()
-		def serr = new StringBuilder()
-		def proc = 'sudo docker info'.execute()
+    boolean getIsContainerRunning(){
+        return this.IsDockerInstalled
+    }
 
-		proc.consumeProcessOutput(sout, serr)
-		proc.waitForOrKill(1000)
-		if (!proc.exitValue()) {
-			def info=sout.toString().split("\\r?\\n").each{ it.trim() }.collectEntries {
-				def key_val=it.split(": ")
-				[(key_val.first()):key_val.last()]
-			}
-			//println "Docker version: ${info["Server Version"]}"
-			this.IsDockerInstalled=true
-		}
-//        else {
-//			println serr
-//		}
-	}
+    @NonCPS
+    private String DockerExecCommand(String command){
+        def sout = new StringBuilder()
+        def serr = new StringBuilder()
+        def proc = 'sudo ${command}'.execute()
+
+        proc.consumeProcessOutput(sout, serr)
+        proc.waitForOrKill(1000)
+        return !proc.exitValue() ? sout.toString() : null
+    }
+
+    private void CheckDockerInstalled() {
+        def dcommres = DockerExecCommand("docker info")
+        if (dcommres) {
+            dockerInfo = dcommres.
+                    split("\\r?\\n").
+                    each { it.trim() }.
+                    collectEntries {
+                        def key_val = it.split(": ")
+                        [(key_val.first()): key_val.last()]
+                    }
+            IsDockerInstalled = true
+        }
+    }
+
+    boolean IsContainerRunnig(){
+        if (DockerExecCommand("docker ps -f \"name=${containerName}\" -q"))
+            return true
+    }
 }

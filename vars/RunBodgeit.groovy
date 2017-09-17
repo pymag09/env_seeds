@@ -11,7 +11,6 @@ def call() {
             sh 'mkdir -p $WORKSPACE/build/WEB-INF/classes'
             echo "ANT"
             withAnt(installation: 'pipeline-ant') {
-                //sh 'ant build test'
                 sh 'ant build test'
             }
         }
@@ -19,6 +18,8 @@ def call() {
             def dockeris = new Docker().IsDockerInstalled
             if (dockeris)
                 sh 'sudo docker run -d -v $WORKSPACE/bodgeit/build/bodgeit.war:/usr/local/tomcat/webapps/bodgeit.war --name bodgeit -p 8181:8080 tomcat'
+            else
+                echo "Docker is not installed"
         }
     }
 }
