@@ -8,7 +8,7 @@ class Docker implements Serializable {
     def steps
 
     Docker(steps, String container){
-        this.IsDockerInstalled=false
+        //this.IsDockerInstalled=false
         this.containerName=container
         this.steps=steps
         CheckDockerInstalled()
