@@ -2,6 +2,7 @@ package pymag.dsl
 
 import pymag.dsl.Docker
 
+@NonCPS
 def call() {
     node {
         stage("Build and put into container") {
