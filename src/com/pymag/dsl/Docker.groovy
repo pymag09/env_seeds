@@ -2,7 +2,7 @@ package com.pymag.dsl
 
 
 class Docker implements Serializable {
-	boolean IsDockerInstalled
+	Boolean IsDockerInstalled
     String containerName
     Map<String, String> dockerInfo
     def steps
@@ -26,9 +26,6 @@ class Docker implements Serializable {
 
         proc.consumeProcessOutput(sout, serr)
         proc.waitForOrKill(1000)
-        steps.echo "Command: ${proc}"
-        steps.echo "Error: ${serr}"
-        steps.echo "Exec status: ${proc.exitValue()}"
         return proc.exitValue() ? "" : sout.toString()
     }
 
@@ -44,6 +41,9 @@ class Docker implements Serializable {
                         [(key_val.first()): key_val.last()]
                     }
             this.IsDockerInstalled = true
+        } else {
+            steps.echo "Docker is not installed"
+            assert this.IsDockerInstalled==true
         }
     }
 

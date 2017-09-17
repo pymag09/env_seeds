@@ -19,8 +19,6 @@ def call() {
             echo "${docker_is}"
             if (docker_is)
                 sh 'sudo docker run -d -v $WORKSPACE/bodgeit/build/bodgeit.war:/usr/local/tomcat/webapps/bodgeit.war --name bodgeit -p 8181:8080 tomcat'
-            else
-                echo "Docker is not installed"
         }
     }
 }
