@@ -14,7 +14,7 @@ def call(body) {
         stage("Run container") {
             echo "${container_name}"
             if (d.IsContainerRunnig())
-                sh 'sudo ${config.command}'
+                sh "sudo ${config.command}"
         }
     }
 }
