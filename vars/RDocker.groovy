@@ -22,4 +22,3 @@ def call(body) {
         }
     }
 }
-
