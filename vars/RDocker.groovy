@@ -15,7 +15,7 @@ def call(body) {
             if (d.IsContainerNotRunnig())
                 sh "sudo ${config.command}"
             else {
-                echo "Container is running. Restart it."
+                echo "++++++++ Container is running. Restart it. ++++++++"
                 sh "sudo docker stop ${container_name}"
                 sh "sudo docker start ${container_name}"
             }
