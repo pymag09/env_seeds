@@ -8,12 +8,12 @@ def call(body) {
 
     node {
         ansiColor('xterm') {
-            stage("\\e[31;1mBuild and put into container\\e[0m") {
-                echo "\\e[31;1m++++++++ GIT ++++++++\\e[0m"
+            stage("\u001B[31;1mBuild and put into container\u001B[0m") {
+                echo "\u001B[31;1m++++++++ GIT ++++++++\u001B[0m"
                 git branch: 'master', url: 'https://github.com/psiinon/bodgeit.git'
-                echo "\\e[31;1m++++++++ MKDIR ++++++++\\e[0m"
+                echo "\u001B[31;1m++++++++ MKDIR ++++++++\u001B[0m"
                 sh 'mkdir -p $WORKSPACE/build/WEB-INF/classes'
-                echo "\\e[31;1m++++++++ ANT ++++++++\\e[0m"
+                echo "\u001B[31;1m++++++++ ANT ++++++++\u001B[0m"
                 withAnt(installation: "${config.anttool}") {
                     sh 'ant build test'
                 }
