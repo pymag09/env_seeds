@@ -12,8 +12,10 @@ def call(body) {
     // docker run -d -v $WORKSPACE/bodgeit/build/bodgeit.war:/usr/local/tomcat/webapps/bodgeit.war --name bodgeit -p 8181:8080 tomcat
     node {
         stage("Run container ${container_name}") {
-            if (d.IsContainerNotRunnig())
+            if (d.IsContainerNotRunnig()) {
+                echo "Container ${container_name} does not exist"
                 sh "sudo ${config.command}"
+            }
             else {
                 echo "++++++++ Container is running. Restart it. ++++++++"
                 sh "sudo docker stop ${container_name}"
