@@ -7,16 +7,18 @@ def call(body) {
     body()
 
     node {
-        stage("Build and put into container") {
-            echo "++++++++ GIT ++++++++"
-            git branch: 'master', url: 'https://github.com/psiinon/bodgeit.git'
-            echo "++++++++ MKDIR ++++++++"
-            sh 'mkdir -p $WORKSPACE/build/WEB-INF/classes'
-            echo "++++++++ ANT ++++++++"
-            withAnt(installation: "${config.anttool}") {
-                sh 'ant build test'
+        ansiColor('xterm') {
+            stage("\u001B[31Build and put into container\u001B[0m") {
+                echo "++++++++ GIT ++++++++"
+                git branch: 'master', url: 'https://github.com/psiinon/bodgeit.git'
+                echo "++++++++ MKDIR ++++++++"
+                sh 'mkdir -p $WORKSPACE/build/WEB-INF/classes'
+                echo "++++++++ ANT ++++++++"
+                withAnt(installation: "${config.anttool}") {
+                    sh 'ant build test'
+                }
+                archiveArtifacts artifacts: 'build/bodgeit.war', fingerprint: true, onlyIfSuccessful: true
             }
-            archiveArtifacts artifacts: 'build/bodgeit.war', fingerprint: true, onlyIfSuccessful: true
         }
     }
 }
