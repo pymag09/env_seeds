@@ -1,6 +1,11 @@
 package com.pymag.dsl
 
-def call() {
+def call(body) {
+    def config = [:]
+    body.resolveStrategy = Closure.DELEGATE_FIRST
+    body.delegate = config
+    body()
+
     node {
         stage("Build and put into container") {
             echo "++++++++ GIT ++++++++"
@@ -8,7 +13,7 @@ def call() {
             echo "++++++++ MKDIR ++++++++"
             sh 'mkdir -p $WORKSPACE/build/WEB-INF/classes'
             echo "++++++++ ANT ++++++++"
-            withAnt(installation: 'pipeline-ant') {
+            withAnt(installation: "${ant-tool}") {
                 sh 'ant build test'
             }
         }
