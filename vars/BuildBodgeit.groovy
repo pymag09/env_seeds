@@ -16,6 +16,7 @@ def call(body) {
             withAnt(installation: "${config.anttool}") {
                 sh 'ant build test'
             }
+            archiveArtifacts artifacts: 'bodgeit/build/bodgeit.war', fingerprint: true, onlyIfSuccessful: true
         }
     }
 }
