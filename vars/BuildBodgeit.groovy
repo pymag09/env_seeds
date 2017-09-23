@@ -13,7 +13,7 @@ def call(body) {
             echo "++++++++ MKDIR ++++++++"
             sh 'mkdir -p $WORKSPACE/build/WEB-INF/classes'
             echo "++++++++ ANT ++++++++"
-            withAnt(installation: "${ant-tool}") {
+            withAnt(installation: "${config.anttool}") {
                 sh 'ant build test'
             }
         }
