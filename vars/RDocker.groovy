@@ -10,7 +10,7 @@ def call(body) {
     def container_name = config.command.split(" -").findAll({ it =~ /-name / }).last().split(" ").last()
     Docker d = new Docker(container_name)
     // docker run -d -v $WORKSPACE/bodgeit/build/bodgeit.war:/usr/local/tomcat/webapps/bodgeit.war --name bodgeit -p 8181:8080 tomcat
-    node {
+    node('master') {
         stage("Run container ${container_name}") {
             if (d.IsContainerNotCreated()) {
                 sh "sudo ${config.command}"
