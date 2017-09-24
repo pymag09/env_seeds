@@ -1,4 +1,79 @@
-freeStyleJob('zap-example') {
+// Global variables
+def top_folder_name="bodgeit-pipeline"
+def pipeline_name="bodgeit-delivery-pipeline"
+def build_step_name="bodgeit-build"
+def deploy_step_name="bodgeit-deploy"
+def test_step_name="bodgeit-zap"
+
+// Top level folder
+folder("${top_folder_name}") {
+    displayName("${top_folder_name}")
+    description('Delivery pipeline for bodgeit site')
+}
+
+// Entry point. Delivery pipeline
+pipelineJob("${top_folder_name}/${pipeline_name}") {
+    displayName("${pipeline_name}")
+    definition {
+        cps {
+            script('''
+node{
+    build \'''' + "${top_folder_name}/${build_step_name}" + '''\'
+    build job: \'''' + "${top_folder_name}/${deploy_step_name}" + '''\', parameters: [string(name: 'upstream_job', value: \'''' + "${top_folder_name}/${build_step_name}" + '''\')]
+    build \'''' + "${top_folder_name}/${test_step_name}" + '''\'
+}
+'''
+)
+            sandbox(sandbox=false)
+
+        } 
+    }
+}
+
+// Build job
+pipelineJob("${top_folder_name}/${build_step_name}") {
+    displayName("${build_step_name}")
+    definition {
+        cps {
+            script('''
+@Library('bodgeit') _
+
+BuildBodgeit{
+    anttool = "ant-latest"
+}
+'''
+)
+            sandbox(sandbox=false)
+
+        } 
+    }
+}
+// Deploy job
+pipelineJob("${top_folder_name}/${deploy_step_name}") {
+    displayName("${deploy_step_name}")
+    definition {
+        cps {
+            script('''
+@Library("bodgeit") _
+
+node('master'){
+    properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '2')), [$class: 'CopyArtifactPermissionProperty', projectNames: '*'], parameters([string(defaultValue: '', description: 'Job name to take artefact from', name: 'upstream_job')]), pipelineTriggers([])])
+    step([$class: 'CopyArtifact', filter: 'build/bodgeit.war', fingerprintArtifacts: true, flatten: true, projectName: "${params.upstream_job}"])
+}
+    
+RDocker{
+    command = 'docker run -d -v $WORKSPACE/build/bodgeit.war:/usr/local/tomcat/webapps/bodgeit.war --name bodgeit -p 8181:8080 tomcat'
+}
+
+'''
+)
+            sandbox(sandbox=false)
+
+        } 
+    }
+}
+// Security test job
+freeStyleJob("${top_folder_name}/${test_step_name}") {
     logRotator(-1,2,-1,-1)
     authenticationToken('VANDHRV73hbc5dsj')
     steps {
@@ -10,6 +85,8 @@ freeStyleJob('zap-example') {
                 autoInstall(true)
                 toolUsed("zap-2.6.0")
                 zapHome("/var/lib/jenkins/ZAP")
+                alertFilters("")
+                loggedOutIndicator("")
                 jdk("InheritFromJob")
                 timeout(60)
                 zapSettingsDir("/var/lib/jenkins/ZAP")
