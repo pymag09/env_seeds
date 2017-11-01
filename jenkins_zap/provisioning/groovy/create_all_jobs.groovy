@@ -18,15 +18,21 @@ pipelineJob("${top_folder_name}/${pipeline_name}") {
         cps {
             script('''
 node{
-    build \'''' + "${top_folder_name}/${build_step_name}" + '''\'
-    build job: \'''' + "${top_folder_name}/${deploy_step_name}" + '''\', parameters: [string(name: 'upstream_job', value: \'''' + "${top_folder_name}/${build_step_name}" + '''\')]
-    build \'''' + "${top_folder_name}/${test_step_name}" + '''\'
+    stage("Build bodgeut from sources code using Ant"){
+        build \'''' + "${top_folder_name}/${build_step_name}" + '''\'
+    }
+    stage("Deploy bodgeit in docker containter"){
+        build job: \'''' + "${top_folder_name}/${deploy_step_name}" + '''\', parameters: [string(name: 'upstream_job', value: \'''' + "${top_folder_name}/${build_step_name}" + '''\')]
+    }
+    stage("Run security test"){
+        build \'''' + "${top_folder_name}/${test_step_name}" + '''\'
+    }
 }
 '''
 )
             sandbox(sandbox=false)
 
-        } 
+        }
     }
 }
 
@@ -45,7 +51,7 @@ BuildBodgeit{
 )
             sandbox(sandbox=false)
 
-        } 
+        }
     }
 }
 // Deploy job
@@ -60,7 +66,7 @@ node('master'){
     properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '2')), [$class: 'CopyArtifactPermissionProperty', projectNames: '*'], parameters([string(defaultValue: '', description: 'Job name to take artefact from', name: 'upstream_job')]), pipelineTriggers([])])
     step([$class: 'CopyArtifact', filter: 'build/bodgeit.war', fingerprintArtifacts: true, flatten: true, projectName: "${params.upstream_job}"])
 }
-    
+
 RDocker{
     command = 'docker run -d -v $WORKSPACE/build/bodgeit.war:/usr/local/tomcat/webapps/bodgeit.war --name bodgeit -p 8181:8080 tomcat'
 }
@@ -69,7 +75,7 @@ RDocker{
 )
             sandbox(sandbox=false)
 
-        } 
+        }
     }
 }
 // Security test job
@@ -153,7 +159,7 @@ freeStyleJob("${top_folder_name}/${test_step_name}") {
                 jiraAlertHigh(false)
                 jiraAlertMedium(false)
                 jiraAlertLow(false)
-                jiraFilterIssuesByResourceType(false) 
+                jiraFilterIssuesByResourceType(false)
                 cmdLinesZAP {
                     zapCmdLine {
                         cmdLineOption("-host")
@@ -172,7 +178,7 @@ freeStyleJob("${top_folder_name}/${test_step_name}") {
                         cmdLineValue("database.compact=true")
                     }
 
-                } 
+                }
             }
         }
     }
