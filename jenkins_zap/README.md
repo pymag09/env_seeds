@@ -25,4 +25,5 @@ https://wiki.jenkins.io/display/JENKINS/Pipeline+Plugin
 
 ![example1](images/ex3.png)  
 ![example1](images/ex1.png)  
+![example1](images/ex4.jpg)  
 ![example1](images/ex2.png)  
