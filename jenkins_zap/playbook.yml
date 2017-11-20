@@ -1,0 +1,6 @@
+---
+
+- hosts: zap-jenkins
+  become: True
+  roles:
+    - role: provisioning/zap

@@ -55,8 +55,17 @@ class DeployJob extends PipelineDSLTemplate {
     final private String inlineScript = '''@Library("bodgeit") _
 
 node('master'){
-    properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '2')), [$class: 'CopyArtifactPermissionProperty', projectNames: '*'], parameters([string(defaultValue: '', description: 'Job name to take artefact from', name: 'upstream_job')]), pipelineTriggers([])])
-    step([$class: 'CopyArtifact', filter: 'build/bodgeit.war', fingerprintArtifacts: true, flatten: true, projectName: "${params.upstream_job}"])
+    properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '',
+                                artifactNumToKeepStr: '',
+                                daysToKeepStr: '',
+                                numToKeepStr: '2')),
+                [$class: 'CopyArtifactPermissionProperty', projectNames: '*'],
+                parameters([string(defaultValue: '', description: 'Job name to take artefact from', name: 'upstream_job')]), pipelineTriggers([])])
+    step([$class: 'CopyArtifact',
+        filter: 'build/bodgeit.war',
+        fingerprintArtifacts: true,
+        flatten: true,
+        projectName: "${params.upstream_job}"])
 }
 RDocker{
     command = 'docker run -d -v $WORKSPACE/build/bodgeit.war:/usr/local/tomcat/webapps/bodgeit.war --name bodgeit -p 8181:8080 tomcat'

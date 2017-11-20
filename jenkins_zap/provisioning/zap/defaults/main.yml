@@ -1,0 +1,42 @@
+---
+
+jenkins_ver: 2.7.4
+jenkins_url: https://pkg.jenkins.io/debian-stable/binary/jenkins_{{ jenkins_ver }}_all.deb
+jenkins_disable_wizard: True
+jenkins_dependencies:
+  - mc
+  - docker.io=1.10.3-0ubuntu6
+  - openjdk-8-jdk
+  - daemon
+  - wget
+  - jq
+jenkins_plugins:
+  dynamicLoad: true
+  plugins:
+    - cloudbees-folder
+    - antisamy-markup-formatter
+    - build-timeout
+    - credentials-binding
+    - timestamper
+    - ws-cleanup
+    - ant
+    - gradle
+    - workflow-aggregator
+    - github-organization-folder
+    - pipeline-stage-view
+    - git
+    - subversion
+    - ssh-slaves
+    - matrix-auth
+    - pam-auth
+    - ldap
+    - email-ext
+    - mailer
+    - custom-tools-plugin
+    - htmlpublisher
+    - zap
+    - job-dsl
+    - authorize-project
+    - workflow-aggregator
+    - copyartifact
+    - ansicolor
