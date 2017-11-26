@@ -14,7 +14,8 @@ import com.cwctravel.hudson.plugins.extended_choice_parameter.*;
 import org.jenkinsci.plugins.authorizeproject.strategy.*;
 import org.jenkinsci.plugins.authorizeproject.*;
 import jenkins.security.QueueItemAuthenticatorConfiguration;
-
+import hudson.plugins.sonar.*
+import hudson.plugins.sonar.model.*
 
 import hudson.model.Descriptor;
 import hudson.model.Saveable;
@@ -122,8 +123,42 @@ def configureAntTool(){
 	instance.save()
 }
 
+def configureSonarServer(){
+	def instance = Jenkins.getInstance()
+	def desc_sonar = instance.getDescriptor("hudson.plugins.sonar.SonarGlobalConfiguration")
+
+	def triggers = new TriggersConfig(false, false, '')
+	def sonar_inst = new SonarInstallation('docker-sonar',
+																		    'http://192.168.1.165:9000', '5.3', '',
+																		    '', '', '',
+																		    '', '', triggers,
+																				'', '', '')
+
+	def sonar_installations = desc_sonar.getInstallations()
+	sonar_installations += sonar_inst
+	desc_sonar.setInstallations((SonarInstallation[]) sonar_installations)
+	desc_sonar.save()
+	instance.save()
+}
+
+def configureSonarScaner(){
+	def instance = Jenkins.getInstance()
+	def desc_sonar = instance.getDescriptor("hudson.plugins.sonar.SonarRunnerInstallation")
+	def sonar_installations = desc_sonar.getInstallations()
+
+	def sonar_inst_prop = new InstallSourceProperty([new SonarRunnerInstaller('3.0.3.778')])
+	def sonar_runner_inst = new SonarRunnerInstallation('sonar-latest', '', [sonar_inst_prop])
+
+	sonar_installations += sonar_runner_inst
+	desc_sonar.setInstallations((SonarRunnerInstallation[]) sonar_installations)
+	desc_sonar.save()
+	instance.save()
+}
+
 configureAythStrategy()
 configureAntTool()
+configureSonarServer()
+configureSonarScaner()
 configureCustomTool()
 configureGlobalPipelineLib()
 createSeedJob()

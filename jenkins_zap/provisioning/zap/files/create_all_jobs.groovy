@@ -4,6 +4,7 @@ class JobRoot {
     final protected String build_step_name="bodgeit-build"
     final protected String deploy_step_name="bodgeit-deploy"
     final protected String test_step_name="bodgeit-zap"
+    final protected String sonar_job_name="SonarQube"
     protected def dslFactory
 
     public void build() {
@@ -25,16 +26,25 @@ class PipelineDSLTemplate extends JobRoot {
 }
 class MainPipelineJob extends PipelineDSLTemplate {
     final String job_name = pipeline_name
-    final private String inlineScript = '''node{
+    final private String inlineScript = '''def builds = [:]
+    builds['zap'] = {
+      stage("Run security test"){
+          build \'''' + "${top_folder_name}/${test_step_name}" + '''\'
+      }
+    }
+    builds['sonar'] = {
+      stage("Run Sonar job"){
+          build \'''' + "${top_folder_name}/${sonar_job_name}" + '''\'
+      }
+    }
+    node{
     stage("Build bodgeit from source code using Ant"){
         build \'''' + "${top_folder_name}/${build_step_name}" + '''\'
     }
     stage("Deploy bodgeit in docker containter"){
         build job: \'''' + "${top_folder_name}/${deploy_step_name}" + '''\', parameters: [string(name: 'upstream_job', value: \'''' + "${top_folder_name}/${build_step_name}" + '''\')]
     }
-    stage("Run security test"){
-        build \'''' + "${top_folder_name}/${test_step_name}" + '''\'
-    }
+    parallel builds
 }
 '''
   MainPipelineJob(def dslFactory){ this.dslFactory = dslFactory }
@@ -55,17 +65,8 @@ class DeployJob extends PipelineDSLTemplate {
     final private String inlineScript = '''@Library("bodgeit") _
 
 node('master'){
-    properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '',
-                                artifactNumToKeepStr: '',
-                                daysToKeepStr: '',
-                                numToKeepStr: '2')),
-                [$class: 'CopyArtifactPermissionProperty', projectNames: '*'],
-                parameters([string(defaultValue: '', description: 'Job name to take artefact from', name: 'upstream_job')]), pipelineTriggers([])])
-    step([$class: 'CopyArtifact',
-        filter: 'build/bodgeit.war',
-        fingerprintArtifacts: true,
-        flatten: true,
-        projectName: "${params.upstream_job}"])
+    properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '2')), [$class: 'CopyArtifactPermissionProperty', projectNames: '*'], parameters([string(defaultValue: '', description: 'Job name to take artefact from', name: 'upstream_job')]), pipelineTriggers([])])
+    step([$class: 'CopyArtifact', filter: 'build/bodgeit.war', fingerprintArtifacts: true, flatten: true, projectName: "${params.upstream_job}"])
 }
 RDocker{
     command = 'docker run -d -v $WORKSPACE/build/bodgeit.war:/usr/local/tomcat/webapps/bodgeit.war --name bodgeit -p 8181:8080 tomcat'
@@ -73,6 +74,50 @@ RDocker{
 '''
   DeployJob(def dslFactory) { this.dslFactory = dslFactory }
 }
+
+class SonarJob extends JobRoot {
+  final String job_name = sonar_job_name
+  final private Closure DSLcode = {
+    dslFactory.freeStyleJob("${top_folder_name}/${sonar_job_name}") {
+      logRotator(-1, 2, -1, -1)
+      scm {
+        git {
+          remote {
+              name('origin')
+              url('https://github.com/psiinon/bodgeit.git')
+          }
+        }
+        steps {
+            shell('mkdir -p $WORKSPACE/build/WEB-INF/classes')
+            ant {
+              targets(['build'])
+              antInstallation('ant-latest')
+            }
+            sonarRunnerBuilder {
+              additionalArguments('')
+              installationName('docker-sonar')
+              javaOpts('')
+              jdk('')
+              project('')
+              properties('''sonar.projectKey=b3c23d987bc0fc35e054f54d1e913793afcd7e13
+sonar.projectName=bodgeit
+sonar.projectVersion=1.0.0
+sonar.projectDescription=Static analysis for the bodgeit
+sonar.sources=$WORKSPACE
+sonar.java.binaries=$WORKSPACE/build/WEB-INF/classes/
+sonar.language=java
+sonar.sourceEncoding=UTF-8
+              ''')
+              sonarScannerName('sonar-latest')
+              task('')
+            }
+        }
+      }
+    }
+  }
+SonarJob(def dslFactory) { this.dslFactory = dslFactory }
+}
+
 class RunZAPJob extends JobRoot {
     final String job_name = test_step_name
     final private Closure DSLcode = {
@@ -209,5 +254,6 @@ def jobs = [new TopFolder(this),
             new MainPipelineJob(this),
             new BuildJob(this),
             new DeployJob(this),
-            new RunZAPJob(this)]
+            new RunZAPJob(this),
+            new SonarJob(this)]
 jobs.each { it.build() }

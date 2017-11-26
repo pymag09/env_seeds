@@ -39,7 +39,10 @@
 
 - name: Install pip dependencies
   pip:
-    name: jmespath
+    name: "{{ item }}"
+  with_items:
+    - docker-py
+    - jmespath
   tags:
     - install
     - depend
@@ -73,6 +76,15 @@
     tags:
       - install
   when: (isInstalled is not defined) or (not isInstalled)
+
+- name: Create Sonar server container
+  docker_container:
+    name: sonar
+    image: sonarqube
+    state: started
+    recreate: yes
+    published_ports:
+      - 9000:9000
 
 - name: Create default user admin and enable security
   uri:
@@ -155,6 +167,9 @@
     password: admin
     force_basic_auth: yes
     body: "script={{ lookup('file', '/vagrant/provisioning/groovy/create_all_jobs.groovy') | urlencode }}"
+  tags:
+    - jobs
+    - config
 
 - name: Unsure seed job folder exists
   file:
