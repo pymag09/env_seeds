@@ -19,6 +19,7 @@ class Docker implements Serializable {
         proc.consumeProcessOutput(sout, serr)
         proc.waitForOrKill(1000)
         assert !proc.exitValue() : "${serr}"
+        println(sout.toString())
         return sout.toString()
     }
 
@@ -36,6 +37,6 @@ class Docker implements Serializable {
 
     @NonCPS
     boolean IsContainerNotCreated(){
-        return DockerExecCommand("docker ps -a -f \"name=${containerName}\" -q").isEmpty()
+        return DockerExecCommand("docker ps -a -f name=${this.containerName} -q").isEmpty()
     }
 }
