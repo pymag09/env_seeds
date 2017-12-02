@@ -20,6 +20,7 @@ https://www.sonarqube.org/
 * Jenkins login: http://192.168.1.165:8080  
   **username:** admin  
   **password:** admin  
+* Sonar page http://192.168.1.165:9000
 * start job "bodgeit-delivery-pipeline"
 * OPTIONAL STEP  
   In browser: http://192.168.1.165:8181/bodgeit/register.jsp register  
@@ -33,3 +34,5 @@ https://www.sonarqube.org/
 ![example1](images/ex1.png)  
 ![example1](images/ex4.jpg)  
 ![example1](images/ex2.png)  
+![example1](images/ex5.png)  
+![example1](images/ex4.png)  
