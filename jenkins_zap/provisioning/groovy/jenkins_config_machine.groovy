@@ -21,9 +21,16 @@ import hudson.model.Descriptor;
 import hudson.model.Saveable;
 import hudson.tools.*;
 
-def configureAythStrategy(){
+def configureAuthStrategy(){
 	GlobalQueueItemAuthenticator auth = new GlobalQueueItemAuthenticator(new TriggeringUsersAuthorizationStrategy())
 	QueueItemAuthenticatorConfiguration.get().authenticators.add(auth)
+}
+
+def increaseExecutorsNumber(){
+	Hudson hudson = Hudson.getInstance()
+	hudson.setNumExecutors(10)
+	hudson.setNodes(hudson.getNodes())
+	hudson.save()
 }
 
 def configureCustomTool()
@@ -155,7 +162,8 @@ def configureSonarScaner(){
 	instance.save()
 }
 
-configureAythStrategy()
+configureAuthStrategy()
+increaseExecutorsNumber()
 configureAntTool()
 configureSonarServer()
 configureSonarScaner()

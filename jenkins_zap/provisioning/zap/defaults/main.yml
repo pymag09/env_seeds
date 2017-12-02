@@ -1,6 +1,6 @@
 ---
 
-jenkins_ver: 2.7.4
+jenkins_ver: 2.73.3
 jenkins_url: https://pkg.jenkins.io/debian-stable/binary/jenkins_{{ jenkins_ver }}_all.deb
 jenkins_disable_wizard: True
 jenkins_dependencies:
@@ -30,6 +30,7 @@ jenkins_plugins:
     - matrix-auth
     - pam-auth
     - ldap
+    - sonar
     - email-ext
     - mailer
     - custom-tools-plugin
@@ -40,4 +41,3 @@ jenkins_plugins:
     - workflow-aggregator
     - copyartifact
     - ansicolor
-    - sonar

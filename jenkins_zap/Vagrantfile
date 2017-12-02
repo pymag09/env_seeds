@@ -22,6 +22,7 @@ Vagrant.configure(2) do |config|
         ansible.playbook = "playbook.yml"
         ansible.install_mode = "pip"
         ansible.version = "2.3.2.0"
+        #ansible.tags = ['jobs']
         #ansible.verbose = "vvv"
       end
       end

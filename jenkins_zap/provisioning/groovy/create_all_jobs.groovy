@@ -28,8 +28,8 @@ class MainPipelineJob extends PipelineDSLTemplate {
     final String job_name = pipeline_name
     final private String inlineScript = '''def builds = [:]
     builds['zap'] = {
-      stage("Run security test"){
-          build \'''' + "${top_folder_name}/${test_step_name}" + '''\'
+      stage("Deploy bodgeit in docker containter and start ZAP"){
+          build job: \'''' + "${top_folder_name}/${deploy_step_name}" + '''\', parameters: [string(name: 'upstream_job', value: \'''' + "${top_folder_name}/${build_step_name}" + '''\')]
       }
     }
     builds['sonar'] = {
@@ -40,9 +40,6 @@ class MainPipelineJob extends PipelineDSLTemplate {
     node{
     stage("Build bodgeit from source code using Ant"){
         build \'''' + "${top_folder_name}/${build_step_name}" + '''\'
-    }
-    stage("Deploy bodgeit in docker containter"){
-        build job: \'''' + "${top_folder_name}/${deploy_step_name}" + '''\', parameters: [string(name: 'upstream_job', value: \'''' + "${top_folder_name}/${build_step_name}" + '''\')]
     }
     parallel builds
 }
@@ -68,8 +65,12 @@ node('master'){
     properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '2')), [$class: 'CopyArtifactPermissionProperty', projectNames: '*'], parameters([string(defaultValue: '', description: 'Job name to take artefact from', name: 'upstream_job')]), pipelineTriggers([])])
     step([$class: 'CopyArtifact', filter: 'build/bodgeit.war', fingerprintArtifacts: true, flatten: true, projectName: "${params.upstream_job}"])
 }
-RDocker{
-    command = 'docker run -d -v $WORKSPACE/build/bodgeit.war:/usr/local/tomcat/webapps/bodgeit.war --name bodgeit -p 8181:8080 tomcat'
+node("master"){
+    stage("run security tests"){
+         docker.image('tomcat').withRun('--name bodgeit -v $WORKSPACE/build/bodgeit.war:/usr/local/tomcat/webapps/bodgeit.war -p 8181:8080') {
+             build 'bodgeit-pipeline/bodgeit-zap'
+        }
+    }
 }
 '''
   DeployJob(def dslFactory) { this.dslFactory = dslFactory }
