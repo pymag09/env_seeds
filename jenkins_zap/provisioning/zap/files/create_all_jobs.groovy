@@ -56,31 +56,26 @@ import com.pymag.dsl.Engine
 Engine e = new Engine(params)
 
 def builds = [:]
-    builds['zap'] = {
-      stage("Deploy bodgeit in docker containter and start ZAP"){
-          build job: 'bodgeit-pipeline/bodgeit-deploy', parameters: [string(name: 'upstream_job', value: 'bodgeit-pipeline/bodgeit-build')]
+builds['zap'] = {
+  stage("Deploy bodgeit in docker containter and start ZAP"){
+      build job: 'bodgeit-pipeline/bodgeit-deploy', parameters: [string(name: 'upstream_job', value: 'bodgeit-pipeline/bodgeit-build')]
+  }
+}
+if (e.includeSonarTests()) {
+    builds['sonar'] = {
+      stage("Run Sonar job"){
+          build 'bodgeit-pipeline/SonarQube'
       }
     }
-    if (e.includeSonarTests()) {
-        builds['sonar'] = {
-          stage("Run Sonar job"){
-              build 'bodgeit-pipeline/SonarQube'
-          }
-        }
-    }
-    node{
-    stage("Build bodgeit from source code using Ant"){
-        build 'bodgeit-pipeline/bodgeit-build'
-    }
-    if (e.parallelEnabled())
-        stage("Run tests in parallel") {
-            parallel builds
-        }
-    else {
-        stage("Run test sequentaly"){
-            builds.each{ it.value() }
-        }
-    }
+}
+node{
+  stage("Build bodgeit from source code using Ant"){
+      build 'bodgeit-pipeline/bodgeit-build'
+  }
+  if (e.parallelEnabled())
+    parallel builds
+  else
+    builds.each{ it.value() }
 }
 
 '''
