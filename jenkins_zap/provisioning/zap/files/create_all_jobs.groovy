@@ -26,23 +26,63 @@ class PipelineDSLTemplate extends JobRoot {
 }
 class MainPipelineJob extends PipelineDSLTemplate {
     final String job_name = pipeline_name
-    final private String inlineScript = '''def builds = [:]
+    final protected Closure DSLcode = {
+        dslFactory.pipelineJob("${top_folder_name}/${job_name}") {
+            displayName("${job_name}")
+            parameters {
+              booleanParam {
+                  name("run_parallel")
+                  defaultValue(true)
+                  description("Run tests in parallel")
+              }
+              booleanParam {
+                  name("run_sonar")
+                  defaultValue(true)
+                  description("Run Sonar tests")
+              }
+            }
+            definition {
+                cps {
+                    script(inlineScript)
+                    sandbox(sandbox=false)
+                }
+            }
+        }
+    }
+    final private String inlineScript = '''@Library("bodgeit") _
+
+import com.pymag.dsl.Engine
+
+Engine e = new Engine(params)
+
+def builds = [:]
     builds['zap'] = {
       stage("Deploy bodgeit in docker containter and start ZAP"){
-          build job: \'''' + "${top_folder_name}/${deploy_step_name}" + '''\', parameters: [string(name: 'upstream_job', value: \'''' + "${top_folder_name}/${build_step_name}" + '''\')]
+          build job: 'bodgeit-pipeline/bodgeit-deploy', parameters: [string(name: 'upstream_job', value: 'bodgeit-pipeline/bodgeit-build')]
       }
     }
-    builds['sonar'] = {
-      stage("Run Sonar job"){
-          build \'''' + "${top_folder_name}/${sonar_job_name}" + '''\'
-      }
+    if (e.includeSonarTests()) {
+        builds['sonar'] = {
+          stage("Run Sonar job"){
+              build 'bodgeit-pipeline/SonarQube'
+          }
+        }
     }
     node{
     stage("Build bodgeit from source code using Ant"){
-        build \'''' + "${top_folder_name}/${build_step_name}" + '''\'
+        build 'bodgeit-pipeline/bodgeit-build'
     }
-    parallel builds
+    if (e.parallelEnabled())
+        stage("Run tests in parallel") {
+            parallel builds
+        }
+    else {
+        stage("Run test sequentaly"){
+            builds.each{ it.value() }
+        }
+    }
 }
+
 '''
   MainPipelineJob(def dslFactory){ this.dslFactory = dslFactory }
 }
