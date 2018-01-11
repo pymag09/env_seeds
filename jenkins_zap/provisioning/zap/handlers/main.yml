@@ -1,8 +1,4 @@
 ---
-- name: Restart jenkins
-  service:
-    name: jenkins
-    state: restarted
 
 - name: Restart docker
   service:

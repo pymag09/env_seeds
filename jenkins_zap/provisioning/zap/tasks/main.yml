@@ -1,33 +1,5 @@
 ---
 
-- name: Load first page and check if jenkins is online.
-  uri:
-    url: http://localhost:8080/scriptText
-  ignore_errors: yes
-  no_log: True
-  register: install
-
-- name: Create fact isInstalled
-  set_fact:
-    isInstalled: "{{ install.status == 200 or install.status == 403 }}"
-  when: install.status is defined
-
-- name: Create fact isConfigured
-  set_fact:
-    isConfigured: "{{ install.status == 403 }}"
-  when: install.status is defined
-
-- name: Update sudoers
-  copy:
-    src: jenkins
-    dest: /etc/sudoers.d/jenkins
-    owner: root
-    group: root
-    mode: 0600
-  tags:
-    - config
-    - install
-
 - name: Install jenkins dependencies
   apt:
     name: "{{ item }}"
@@ -37,13 +9,6 @@
   tags:
     - install
     - depend
-
-- name: Add jenkins to docker group
-  user:
-    name: jenkins
-    groups: docker
-    append: yes
-  notify: Restart jenkins
 
 - name: Configure docker daemon
   lineinfile:
@@ -61,26 +26,6 @@
     - install
     - depend
 
-- block:
-  - name: "Install jenkins ver. {{ jenkins_ver}}"
-    apt:
-      deb: "{{ jenkins_url }}"
-      state: present
-    tags:
-      - install
-
-  - name: Disable setup wizard.
-    lineinfile:
-      name: /etc/default/jenkins
-      regexp: '^JAVA_ARGS="-Djava.*$'
-      line: 'JAVA_ARGS="-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"'
-    notify: Restart jenkins
-
-  - name: Flush handlers
-    meta: flush_handlers
-
-  when: (isInstalled is not defined) or (not isInstalled)
-
 - name: Create Sonar server container
   docker_container:
     name: sonar
@@ -90,9 +35,56 @@
     published_ports:
       - 9000:9000
 
+- name: Update sudoers
+  copy:
+    src: jenkins
+    dest: /etc/sudoers.d/jenkins
+    owner: root
+    group: root
+    mode: 0600
+  tags:
+    - config
+    - install
+    - sudo
+
+- name: "Install jenkins ver. {{ jenkins_ver}}"
+  apt:
+    deb: "{{ jenkins_url }}"
+    state: present
+  register: install_status
+  tags:
+    - install
+    - apt
+
+- name: Disable setup wizard.
+  lineinfile:
+    name: /etc/default/jenkins
+    regexp: '^JAVA_ARGS="-Djava.*$'
+    line: 'JAVA_ARGS="-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"'
+  register: wizard_status
+  tags:
+    - install
+    - wizard
+
+- name: Add jenkins to docker group
+  user:
+    name: jenkins
+    groups: docker
+    append: yes
+  tags:
+    - docker
+
+- name: Restart jenkins
+  service:
+    name: jenkins
+    state: restarted
+  when: wizard_status.changed or install_status.changed
+  tags:
+    - install
+
 - name: Wait for Jenkins to start
   uri:
-    url: http://localhost:8080/login?from=%2F
+    url: http://localhost:8080/login
     status_code: 200
   register: result
   until: result.status == 200
@@ -105,9 +97,14 @@
   uri:
     url: http://localhost:8080/scriptText
     method: POST
+    user: admin
+    password: admin
+    force_basic_auth: yes
     body: "script={{ lookup('file', '/vagrant/provisioning/groovy/create_user_enble_security.groovy') | urlencode }}"
-  when: not isConfigured
-
+  tags:
+    - security
+    - credentials
+    - groovy_script
 
 - name: "Install plugin"
   uri:
@@ -121,20 +118,9 @@
       - 302
   with_items: "{{ jenkins_plugins.plugins }}"
   changed_when: true
-
-- name: Is plugin installtion process running?
-  uri:
-    url: "http://localhost:8080/updateCenter/installStatus"
-    return_content: yes
-    body_format: json
-    user: admin
-    password: admin
-    force_basic_auth: yes
-  register: plugin_status
-
-- name: Set fact
-  set_fact:
-    isInstallationRunning: "{{ 'Pending' in plugin_status.json.data.jobs|map(attribute='installStatus') }}"
+  tags:
+    - plugin
+    - install
 
 - name: Wait for plugins to be installed
   uri:
@@ -148,12 +134,18 @@
   until: "'Pending' not in plugin_status.json.data.jobs|map(attribute='installStatus')"
   retries: 100
   delay: 5
+  tags:
+    - plugins
+    - install
 
 - name: Restart jenkins
   service:
     name: jenkins
     state: restarted
-  when: isInstallationRunning
+  when: "'SuccessButRequiresRestart' in plugin_status.json.data.jobs|map(attribute='installStatus')"
+  tags:
+    - plugins
+    - install
 
 - name: Wait for Jenkins to start
   uri:
@@ -165,6 +157,7 @@
   delay: 40
   tags:
     - install
+    - plugins
 
 - name: Configure Jenkins
   uri:
@@ -174,20 +167,11 @@
     password: admin
     force_basic_auth: yes
     body: "script={{ lookup('file', '/vagrant/provisioning/groovy/jenkins_config_machine.groovy') | urlencode }}"
-
-- name: Create all jobs
-  uri:
-    url: http://localhost:8080/scriptText
-    method: POST
-    user: admin
-    password: admin
-    force_basic_auth: yes
-    body: "script={{ lookup('file', '/vagrant/provisioning/groovy/create_all_jobs.groovy') | urlencode }}"
   tags:
-    - jobs
     - config
+    - groovy_script
 
-- name: Unsure seed job folder exists
+- name: Ensure seed job folder exists
   file:
     path: /var/lib/jenkins/workspace/seed-job/jobs
     state: directory
@@ -197,6 +181,7 @@
   tags:
    - install
    - config
+   - seed_job
 
 - name: Copy seed job to its workspace
   copy:
@@ -208,6 +193,7 @@
   tags:
     - install
     - config
+    - seed_job
 
 - name: Execute seed job
   uri:
@@ -217,3 +203,6 @@
     password: admin
     force_basic_auth: yes
     status_code: 201
+  tags:
+    - seed_job
+    - config
