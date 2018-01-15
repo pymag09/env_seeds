@@ -3,6 +3,7 @@
 jenkins_ver: 2.73.3
 jenkins_url: https://pkg.jenkins.io/debian-stable/binary/jenkins_{{ jenkins_ver }}_all.deb
 jenkins_disable_wizard: True
+jenkins_groovy_scripts_dir: /vagrant/provisioning/groovy
 jenkins_dependencies:
   - mc
   - docker.io=1.10.3-0ubuntu6

@@ -31,7 +31,7 @@
     name: sonar
     image: sonarqube
     state: started
-    recreate: yes
+    recreate: no
     published_ports:
       - 9000:9000
 
@@ -100,7 +100,7 @@
     user: admin
     password: admin
     force_basic_auth: yes
-    body: "script={{ lookup('file', '/vagrant/provisioning/groovy/create_user_enble_security.groovy') | urlencode }}"
+    body: "script={{ lookup('file', jenkins_groovy_scripts_dir+ '/create_user_enble_security.groovy') | urlencode }}"
   tags:
     - security
     - credentials
@@ -117,7 +117,7 @@
       - 200
       - 302
   with_items: "{{ jenkins_plugins.plugins }}"
-  changed_when: true
+  changed_when: false
   tags:
     - plugin
     - install
@@ -166,7 +166,7 @@
     user: admin
     password: admin
     force_basic_auth: yes
-    body: "script={{ lookup('file', '/vagrant/provisioning/groovy/jenkins_config_machine.groovy') | urlencode }}"
+    body: "script={{ lookup('file', jenkins_groovy_scripts_dir + '/jenkins_config_machine.groovy') | urlencode }}"
   tags:
     - config
     - groovy_script
@@ -179,9 +179,9 @@
     group: jenkins
     mode: 0775
   tags:
-   - install
-   - config
-   - seed_job
+    - install
+    - config
+    - seed_job
 
 - name: Copy seed job to its workspace
   copy:

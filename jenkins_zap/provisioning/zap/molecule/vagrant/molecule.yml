@@ -1,0 +1,30 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: vagrant
+  provider:
+    name: virtualbox
+lint:
+  name: yamllint
+platforms:
+  - name: instance
+    box: ubuntu/xenial64
+    memory: 2048
+    cpus: 1
+provisioner:
+  name: ansible
+  inventory:
+    group_vars:
+      all:
+        jenkins_groovy_scripts_dir: ../groovy
+  lint:
+    name: ansible-lint
+    options:
+      'x': ANSIBLE0016
+scenario:
+  name: vagrant
+verifier:
+  name: testinfra
+  lint:
+    name: flake8
