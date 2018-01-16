@@ -300,6 +300,7 @@ class MultibranchJob extends JobRoot {
           }
       }
     }
+  }
   MultibranchJob(def dslFactory) {this.dslFactory = dslFactory}
 }
 
