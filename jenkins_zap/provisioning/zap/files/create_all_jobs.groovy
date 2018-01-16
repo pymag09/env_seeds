@@ -300,8 +300,7 @@ class MultibranchJob extends JobRoot {
           }
       }
     }
-  =
-  MultibranchJob(def dslFactory) {this.dslFactory - dslFactory}
+  MultibranchJob(def dslFactory) {this.dslFactory = dslFactory}
 }
 
 def jobs = [new TopFolder(this),
