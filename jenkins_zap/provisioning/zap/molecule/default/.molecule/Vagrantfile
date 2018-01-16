@@ -3,7 +3,7 @@
 require 'yaml'
 
 Vagrant.configure('2') do |config|
-  vagrant_config = YAML::load_file('/home/bieliaievskyi/pymag09/local_env/jenkins_zap/provisioning/zap/molecule/vagrant/.molecule/vagrant.yml')
+  vagrant_config = YAML::load_file('/home/bieliaievskyi/pymag09/local_env/jenkins_zap/provisioning/zap/molecule/default/.molecule/vagrant.yml')
 
   if Vagrant.has_plugin?('vagrant-cachier')
     config.cache.scope = 'machine'
