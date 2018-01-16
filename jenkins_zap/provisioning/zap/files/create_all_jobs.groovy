@@ -286,10 +286,29 @@ class TopFolder extends JobRoot {
     TopFolder(def dslFactory) { this.dslFactory = dslFactory }
 }
 
+class MultibranchJob extends JobRoot {
+  final private Closure DSLcode = {
+    dslFactory.multibranchPipelineJob('molecule-test') {
+      branchSources {
+          git {
+              remote('https://magelan09@bitbucket.org/pymag09/sample_ansible_role.git')
+          }
+      }
+      orphanedItemStrategy {
+          discardOldItems {
+              numToKeep(20)
+          }
+      }
+    }
+  =
+  MultibranchJob(def dslFactory) {this.dslFactory - dslFactory}
+}
+
 def jobs = [new TopFolder(this),
             new MainPipelineJob(this),
             new BuildJob(this),
             new DeployJob(this),
             new RunZAPJob(this),
-            new SonarJob(this)]
+            new SonarJob(this),
+            new MultibranchJob(this)]
 jobs.each { it.build() }
