@@ -1,0 +1,4 @@
+---
+
+- name: Include task according node role
+  include: "{{ ansible_hostname }}.yml"

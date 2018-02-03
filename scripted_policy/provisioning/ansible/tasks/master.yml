@@ -1,0 +1,151 @@
+---
+
+- name: Install jenkins dependencies
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+    state: present
+  with_items: "{{ jenkins_dependencies }}"
+  tags:
+    - install
+    - depend
+
+- name: Install pip dependencies
+  pip:
+    name: "{{ item }}"
+  with_items:
+    - jmespath
+    - testinfra
+    - pytest-xdist
+    - paramiko
+  tags:
+    - install
+    - depend
+
+- name: "Install jenkins ver. {{ jenkins_ver}}"
+  apt:
+    deb: "{{ jenkins_url }}"
+    state: present
+  register: install_status
+  tags:
+    - install
+    - apt
+
+- name: Disable setup wizard.
+  lineinfile:
+    name: /etc/default/jenkins
+    regexp: '^JAVA_ARGS="-Djava.*$'
+    line: 'JAVA_ARGS="-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"'
+  register: wizard_status
+  tags:
+    - install
+    - wizard
+
+- name: Restart jenkins
+  service:
+    name: jenkins
+    state: restarted
+  when: wizard_status.changed or install_status.changed
+  tags:
+    - install
+
+- name: Wait for Jenkins to start
+  uri:
+    url: http://localhost:8080/login
+    status_code: 200
+  register: result
+  until: result.status == 200
+  retries: 20
+  delay: 40
+  tags:
+    - install
+
+- name: Create default user admin and enable security
+  uri:
+    url: http://localhost:8080/scriptText
+    method: POST
+    user: admin
+    password: admin
+    force_basic_auth: yes
+    body: "script={{ lookup('file', jenkins_groovy_scripts_dir+ '/create_user_enble_security.groovy') | urlencode }}"
+  tags:
+    - security
+    - credentials
+    - groovy_script
+
+- name: "Install plugin"
+  uri:
+    url: "http://localhost:8080/pluginManager/install?plugin.{{ item }}.default=on"
+    method: POST
+    user: admin
+    password: admin
+    force_basic_auth: yes
+    status_code:
+      - 200
+      - 302
+  with_items: "{{ jenkins_plugins.plugins }}"
+  changed_when: false
+  tags:
+    - plugin
+    - install
+
+- name: Wait for plugins to be installed
+  uri:
+    url: "http://localhost:8080/updateCenter/installStatus"
+    return_content: yes
+    body_format: json
+    user: admin
+    password: admin
+    force_basic_auth: yes
+  register: plugin_status
+  until: "'Pending' not in plugin_status.json.data.jobs|map(attribute='installStatus')"
+  retries: 100
+  delay: 5
+  tags:
+    - plugins
+    - install
+
+- name: Restart jenkins
+  service:
+    name: jenkins
+    state: restarted
+  when: "'SuccessButRequiresRestart' in plugin_status.json.data.jobs|map(attribute='installStatus')"
+  tags:
+    - plugins
+    - install
+
+- name: Wait for Jenkins to start
+  uri:
+    url: http://localhost:8080/login
+    status_code: 200
+  register: result
+  until: result.status == 200
+  retries: 20
+  delay: 40
+  tags:
+    - install
+    - plugins
+
+- name: Make sure that .ssh folder exists
+  file:
+    path: /var/lib/jenkins/.ssh
+    state: directory
+    mode: 0600
+    owner: jenkins
+    group: jenkins
+
+- name: Copy SSH key for node1
+  copy:
+    src: /vagrant/.vagrant/machines/node1/virtualbox/private_key
+    dest: /var/lib/jenkins/.ssh/node1.pem
+    owner: jenkins
+    group: jenkins
+    mode: 0600
+
+- name: Copy SSH key for node2
+  copy:
+    src: /vagrant/.vagrant/machines/node2/virtualbox/private_key
+    dest: /var/lib/jenkins/.ssh/node2.pem
+    owner: jenkins
+    group: jenkins
+    mode: 0600

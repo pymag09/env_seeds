@@ -1,0 +1,6 @@
+---
+
+- hosts: nodes
+  become: True
+  roles:
+    - role: provisioning/ansible

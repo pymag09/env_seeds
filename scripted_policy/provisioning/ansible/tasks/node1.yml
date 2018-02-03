@@ -1,0 +1,20 @@
+---
+
+- name: Install packages
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+    state: present
+  with_items:
+    - git
+    - mc
+    - wget
+    - jq
+  tags:
+    - install
+
+- name: Create user
+  user:
+    name: node_user
+  tags:
+    - install
