@@ -117,18 +117,13 @@ class SonarJob extends JobRoot {
     dslFactory.freeStyleJob("${top_folder_name}/${sonar_job_name}") {
       logRotator(-1, 2, -1, -1)
       scm {
-        git {
-          remote {
-              name('origin')
-              url('https://github.com/psiinon/bodgeit.git')
-          }
-        }
         steps {
-            shell('mkdir -p $WORKSPACE/build/WEB-INF/classes')
-            ant {
-              targets(['build'])
-              antInstallation('ant-latest')
-            }
+          shell('mkdir -p $WORKSPACE/build/WEB-INF/classes')
+          copyArtifacts {
+            projectName("bodgeit-build")
+            filter("build/bodgeit.war")
+            fingerprintArtifacts(true)
+          }
             sonarRunnerBuilder {
               additionalArguments('')
               installationName('docker-sonar')
