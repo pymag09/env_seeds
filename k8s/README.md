@@ -13,27 +13,30 @@ This is an example how to provision minimum kubernetes eco-system(3 nodes cluste
 
 ## CLUSTER
 3 virtualbox nodes:
-Hostname | IP  
--------- | --  
-master | 192.168.1.165  
-minion1 | 192.168.1.166  
-minion2 | 192.168.1.167  
+
+| Hostname | IP            |  
+|--------- | ------------- |  
+| master   | 192.168.1.165 |  
+| minion1  | 192.168.1.166 |  
+| minion2  | 192.168.1.167 |  
 
 etcd cluter:
-Hostname | IP  
--------- | --  
-master | 192.168.1.165  
-minion1 | 192.168.1.166  
-minion2 | 192.168.1.167  
+
+| Hostname | IP            |  
+|--------- | ------------- |  
+| master   | 192.168.1.165 |  
+| minion1  | 192.168.1.166 |  
+| minion2  | 192.168.1.167 |  
 
 kubernetes cluster:
-Service | IP  
-------- | --  
-api server | 192.168.1.165  
-scheduler | 192.168.1.165  
-controller | 192.168.1.165  
-kubelet | 192.168.1.166, 192.168.1.167  
-kube-proxy | 192.168.1.166, 192.168.1.167  
+
+| Service | IP  
+| ---------- | ------------------------------ |  
+| api server | 192.168.1.165                  |  
+| scheduler  | 192.168.1.165                  |  
+| controller | 192.168.1.165                  |  
+| kubelet    | 192.168.1.166, 192.168.1.167   |  
+| kube-proxy | 192.168.1.166, 192.168.1.167   |  
 
 kubernetes addons:
 * kube-dns
