@@ -1,0 +1,98 @@
+{
+  "kind": "Pod",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "kube-apiserver"
+  },
+  "spec": {
+    "hostNetwork": true,
+    "containers": [
+      {
+        "name": "kube-apiserver",
+        "image": "gcr.io/google_containers/hyperkube:v1.9.3",
+        "command": [
+          "/hyperkube",
+          "apiserver",
+          "--service-cluster-ip-range=172.16.16.0/24",
+          "--allow-privileged=true",
+          "--token-auth-file=/etc/kubernetes/known_tokens.csv",
+          "--tls-ca-file=/etc/kubernetes/tls/ca.crt",
+          "--client-ca-file=/etc/kubernetes/tls/ca.crt",
+          "--kubelet-certificate-authority=/etc/kubernetes/tls/ca.crt",
+          "--tls-cert-file=/etc/kubernetes/tls/apiserver.crt",
+          "--tls-private-key-file=/etc/kubernetes/tls/apiserver.key",
+          "--kubelet-client-certificate=/etc/kubernetes/tls/apiserver_kubelet_client.crt",
+          "--kubelet-client-key=/etc/kubernetes/tls/apiserver_kubelet_client.key",
+          "--service-account-key-file=/etc/kubernetes/tls/apiserver.crt",
+          "--etcd-servers=https://192.168.1.165:2379",
+          "--etcd-cafile=/etc/kubernetes/tls/ca.crt",
+          "--etcd-certfile=/etc/kubernetes/tls/etcd_client.crt",
+          "--etcd-keyfile=/etc/kubernetes/tls/etcd_client.key",
+          "--etcd-quorum-read",
+          "--storage-backend=etcd2",
+          "--logtostderr=true",
+          "--admission_control=NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota",
+          "--kubelet-https=true",
+          "--kubelet-timeout=5s",
+          "--insecure-bind-address=127.0.0.1",
+          "--insecure-port=8080",
+          "--bind-address=192.168.1.165",
+          "--secure-port=443",
+          "--runtime-config=extensions/v1beta1/networkpolicies=true",
+          "--service-node-port-range=30000-32767",
+          "--anonymous-auth=false",
+          "--enable-swagger-ui",
+          "--v=2"
+        ],
+        "ports": [
+          {
+            "name": "https",
+            "hostPort": 443,
+            "containerPort": 443
+          },
+          {
+            "name": "local",
+            "hostPort": 8080,
+            "containerPort": 8080
+          }
+        ],
+        "volumeMounts": [
+          {
+            "name": "srvkube",
+            "mountPath": "/etc/kubernetes",
+            "readOnly": true
+          },
+          {
+            "name": "etcssl",
+            "mountPath": "/etc/ssl",
+            "readOnly": true
+          }
+        ],
+        "livenessProbe": {
+          "httpGet": {
+            "scheme": "HTTP",
+            "host": "127.0.0.1",
+            "port": 8080,
+            "path": "/healthz"
+          },
+          "initialDelaySeconds": 15,
+          "timeoutSeconds": 15
+        }
+      }
+    ],
+    "volumes": [
+      {
+        "name": "srvkube",
+        "hostPath": {
+          "path": "/etc/kubernetes"
+        }
+      },
+      {
+        "name": "etcssl",
+        "hostPath": {
+          "path": "/etc/ssl"
+        }
+      }
+    ]
+  }
+}

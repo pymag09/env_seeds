@@ -5,7 +5,20 @@ After=network.target
 [Service]
 User=root
 Group=root
-Environment=FLANNELD_ETCD_ENDPOINTS=http://192.168.1.165:4001
-#Environment=
-WorkingDirectory=/opt/k8s
-ExecStart=/opt/k8s/flanneld -iface enp0s8
+Environment=FLANNELD_ETCD_ENDPOINTS=https://192.168.1.165:2379
+#Environment=FLANNELD_ETCD_PREFIX="coreos.com/network/"
+#Environment=FLANNELD_ETCD_CERTFILE="/etc/etcd/tls/etcd_client.crt"
+#Environment=FLANNELD_ETCD_KEYFILE="/etc/etcd/tls/etcd_client.key"
+#Environment=FLANNELD_ETCD_CAFILE="/etc/etcd/tls/ca.crt"
+#Environment=FLANNELD_IFACE="INTERNAL_NETWORK_NIC"
+#Environment=FLANNEL_OPTIONS="-ip-masq"
+WorkingDirectory=/srv/k8s
+ExecStart=/srv/k8s/flanneld -iface enp0s8 \
+                            -etcd-certfile "/etc/etcd/tls/etcd_client.crt" \
+                            -etcd-keyfile "/etc/etcd/tls/etcd_client.key" \
+                            -etcd-cafile "/etc/etcd/tls/ca.crt" \
+                            -etcd-prefix "/coreos.com/network/" \
+                            -ip-masq
+[Install]
+WantedBy=multi-user.target
+Alias=flannel_network

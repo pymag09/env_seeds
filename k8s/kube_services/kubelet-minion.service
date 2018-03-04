@@ -1,0 +1,15 @@
+[Unit]
+Description=Kubernetes Kubelet Server
+Documentation=https://github.com/kubernetes/kubernetes
+After=etcd.service
+
+[Service]
+ExecStart=/srv/k8s/kubelet --kubeconfig=/var/lib/kubelet/kubeconfig --tls-cert-file=/etc/kubernetes/tls/apiserver_kubelet_client.crt --tls-private-key-file=/etc/kubernetes/tls/apiserver_kubelet_client.key --allow-privileged=true --cluster-dns=172.16.16.10 --cluster-domain=cluster.lan --require-kubeconfig=true
+Restart=always
+RestartSec=2s
+StartLimitInterval=0
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target
+Alias=kubelet

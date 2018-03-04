@@ -1,0 +1,18 @@
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority: /etc/kubernetes/tls/ca.crt
+    server: http://127.0.0.1:8080
+  name: k8s_pymag
+contexts:
+- context:
+    cluster: k8s_pymag
+    user: kube-controller
+  name: kube-system
+current-context: kube-system
+kind: Config
+preferences: {}
+users:
+- name: scheduler
+  user:
+    as-user-extra: {}

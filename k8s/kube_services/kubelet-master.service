@@ -1,0 +1,16 @@
+[Unit]
+Description=Kubernetes Kubelet Server
+Documentation=https://github.com/kubernetes/kubernetes
+After=etcd.service
+
+[Service]
+#EnvironmentFile=-/etc/sysconfig/kubelet
+ExecStart=/srv/k8s/kubelet --pod-manifest-path=/etc/kubernetes/manifests/
+Restart=always
+RestartSec=2s
+StartLimitInterval=0
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target
+Alias=kubelet

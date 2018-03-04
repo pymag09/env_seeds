@@ -3,32 +3,39 @@
 RETRY=6
 TIMEOUT=10
 
-
 update_install_pkg() {
-  if [[ ! -f /etc/kube_update ]]; then
-    apt-get update && touch /etc/kube_update
-  fi
+    apt-get update && \
     apt-get install -y mc docker.io git make etcd
 }
+
 etcd_config() {
-  src=$(md5sum /vagrant/etcd)
+  src=$(md5sum /vagrant/etcd_configs/master)
   dst=$(md5sum /etc/default/etcd)
+  if [[ ! -d /etc/etcd/tls ]]; then
+    cd /vagrant/k8s_tls/
+    ./0_generate_all_certs.sh
+    mkdir -p /etc/etcd/tls
+  fi
   if [[ ! "$src" == "$dst" ]]; then
-     cp /vagrant/etcd /etc/default/etcd
+     cp /vagrant/etcd_configs/${HOSTNAME} /etc/default/etcd
+     cp /vagrant/k8s_tls/etcd* /etc/etcd/tls
+     cp /vagrant/k8s_tls/ca* /etc/etcd/tls
      systemctl stop etcd
      systemctl start etcd
   fi
 }
+
 build_flannel() {
-  if [[ ! -f /opt/k8s/flanneld ]]; then
+  if [[ ! -f /srv/k8s/flanneld ]]; then
     cd /opt
     git clone https://github.com/coreos/flannel.git
     cd flannel
     make dist/flanneld-amd64
-    cp /opt/flannel/dist/flanneld-amd64 /opt/k8s/flanneld || exit 1
+    cp /opt/flannel/dist/flanneld-amd64 /srv/k8s/flanneld || exit 1
     rm -Rf /opt/flannel
   fi
 }
+
 run_flannel() {
   systemctl start flanneld.service
   while [[ $RETRY -gt 0 ]]; do
@@ -40,89 +47,95 @@ run_flannel() {
     fi
   done
   source /var/run/flannel/subnet.env
-  src=$(md5sum < /etc/deafult/docker)
+  src=$(md5sum < /etc/default/docker)
   dst=$(echo "DOCKER_OPTS=\"--ip-masq=false --iptables=false --bip=${FLANNEL_SUBNET} --mtu=${FLANNEL_MTU}\"" | md5sum)
   if [[ ! "$src" == "$dst" ]]; then
     echo "DOCKER_OPTS=\"--ip-masq=false --iptables=false --bip=${FLANNEL_SUBNET} --mtu=${FLANNEL_MTU}\"" > /etc/default/docker
     service docker restart
   fi
+
+  mkdir -p /etc/cni/net.d/
+  cat <<EOF > /etc/cni/net.d/10-flannel.conf
+{
+  "name": "kubenet",
+  "type": "flannel",
+  "delegate": {
+    "isDefaultGateway": true,
+    "ipMasq": true
+  }
 }
+EOF
+}
+
 enable_flannel() {
   if [[ ! -h /etc/systemd/system/flanneld.service ]]; then
-    systemctl enable /opt/kube_services/flanneld.service
+    systemctl enable /srv/kube_services/flanneld.service
   fi
+  systemctl daemon-reload
 }
+
 get_k8s_bin() {
-  cd /opt
-  wget -q "https://github.com/kubernetes/kubernetes/releases/download/v1.5.5/kubernetes.tar.gz"
-  tar -xzvf kubernetes.tar.gz
-  if [[ ! -f /opt/kubernetes/server/kubernetes-server-linux-amd64.tar.gz ]]; then
-    yes | /opt/kubernetes/cluster/get-kube-binaries.sh
-  fi
-  [[ ! -d /opt/kube ]] && mkdir /opt/kube
-  tar -xzvf /opt/kubernetes/server/kubernetes-server-linux-amd64.tar.gz -C /opt/kube
-  cp -R /opt/kube/kubernetes/server/bin/* /opt/k8s || exit 1
-  rm -f kubernetes.tar.gz
-  rm -Rf /opt/kube
-  rm -Rf /opt/kubernetes
+  wget -q -O /srv/k8s/kubelet "http://storage.googleapis.com/kubernetes-release/release/v1.9.3/bin/linux/amd64/kubelet"
+  wget -q -O /srv/k8s/kube-proxy "http://storage.googleapis.com/kubernetes-release/release/v1.9.3/bin/linux/amd64/kube-proxy"
+  chmod +x /srv/k8s/*
 }
+
 copy_k8s_bin() {
-  src=$(ls /opt/k8s | md5sum)
+  src=$(ls /srv/k8s | md5sum)
   dst=$(ls /vagrant/k8s | md5sum)
   if [[ ! "$src" == "$dst" ]]; then
-    cp -R /vagrant/k8s /opt || exit 1
+    cp -R /vagrant/k8s /srv || exit 1
   fi
 }
+
+copy_manifests_and_configs() {
+  mkdir -p /etc/kubernetes/tls
+  mkdir -p /etc/kubernetes/manifests
+  mkdir -p /var/lib/kube-controller
+  mkdir -p /var/lib/kube-scheduler
+  cp /vagrant/manifests/* /etc/kubernetes/manifests
+  cp /vagrant/k8s_tls/* /etc/kubernetes/tls
+  cp /vagrant/kubeconfigs/controller /var/lib/kube-controller/kubeconfig
+  cp /vagrant/kubeconfigs/scheduler /var/lib/kube-scheduler/kubeconfig
+  cp /vagrant/k8s_tls/known_tokens.csv /etc/kubernetes/known_tokens.csv
+}
+
 start_k8s_master() {
   echo "nameserver 127.0.0.1" > /etc/resolvconf/resolv.conf.d/head
   resolvconf -u
-  if [[ ! -h /etc/systemd/system/kube-dns.service ]]; then
-    systemctl enable /opt/kube_services/kube-dns.service
-  fi
-  if [[ ! -h /etc/systemd/system/kube-proxy.service ]]; then
-    systemctl enable /opt/kube_services/kube-proxy.service
-  fi
-  if [[ ! -h /etc/systemd/system/kubelet.service ]]; then
-    systemctl enable /opt/kube_services/kubelet.service
+  if [[ ! -h /etc/systemd/system/kubelet-master.service ]]; then
+    systemctl enable /srv/kube_services/kubelet-master.service
   fi
   if [[ ! -h /etc/systemd/system/kubectl-proxy.service ]]; then
-    systemctl enable /opt/kube_services/kubectl-proxy.service
+    systemctl enable /srv/kube_services/kubectl-proxy.service
   fi
-  docker run --net=host -d gcr.io/google_containers/hyperkube:v1.5.5 /hyperkube controller-manager --master=127.0.0.1:8080 --v=2
-  docker run --net=host -d gcr.io/google_containers/hyperkube:v1.5.5 /hyperkube scheduler --master=127.0.0.1:8080 --v=2
-  docker run --net=host -d --name kubeapi gcr.io/google_containers/hyperkube:v1.5.5 /hyperkube apiserver \
-      --service-cluster-ip-range=172.17.17.0/24 \
-      --insecure-bind-address=0.0.0.0 \
-      --advertise-address=192.168.1.165 \
-      --etcd_servers=http://192.168.1.165:4001 \
-      --v=2
-  systemctl start kube-dns.service
-  systemctl start kube-proxy.service
-  systemctl start kubelet.service
-  systemctl start kubectl-proxy.service
+  systemctl start kubelet-master.service
 }
 
-[[ ! -d /opt/k8s ]] && mkdir /opt/k8s
+[[ ! -d /srv/k8s ]] && mkdir /srv/k8s
 update_install_pkg
 etcd_config
-
 if [[ $(pgrep -c etc[d]) -gt 0 ]]; then
-  etcdctl set /coreos.com/network/config  '{ "Network": "10.1.0.0/16", "Backend": { "Type": "vxlan", "VNI": 1 }  }'
+ etcdctl -ca-file=/etc/etcd/tls/ca.crt --cert-file=/etc/etcd/tls/etcd.crt --key-file=/etc/etcd/tls/etcd.key --peers="https://192.168.1.166:4001,https://192.168.1.166:2379" set /coreos.com/network/config  '{ "Network": "10.1.0.0/16", "Backend": { "Type": "vxlan", "VNI": 1 }  }'
 fi
 if [[ ! -f /usr/bin/kubectl ]]; then
-  wget -q -O /usr/bin/kubectl "http://storage.googleapis.com/kubernetes-release/release/v1.5.5/bin/linux/amd64/kubectl"
+  wget -q -O /usr/bin/kubectl "http://storage.googleapis.com/kubernetes-release/release/v1.9.3/bin/linux/amd64/kubectl"
   chmod +x /usr/bin/kubectl
 fi
-for c in $(docker ps | awk '{print$1}'); do docker stop "$c"; done
-for c in $(docker ps -a | awk '{print$1}'); do docker rm "$c"; done
-
-
-#copy_k8s_bin
-[[ ! -d /opt/kube_services ]] && cp -R /vagrant/kube_services /opt/kube_services
-get_k8s_bin
+for c in $(docker ps -q | awk '{print $1}'); do docker stop "$c"; done
+for c in $(docker ps -a -q | awk '{print $1}'); do docker rm "$c"; done
+cp -R /vagrant/kube_services /srv/kube_services
+if [[ ! -d /vagrant/k8s ]]; then
+  get_k8s_bin
+fi
 build_flannel
 enable_flannel
 run_flannel
-get_k8s_bin
+copy_manifests_and_configs
 start_k8s_master
-cp -R /opt/k8s /vagrant/k8s
+cp -R /srv/k8s /vagrant/k8s
+if [[ $(kubectl get nodes | grep -c Ready) -eq 2 ]]; then
+  kubectl apply -f /vagrant/addons/kube-dns
+  kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
+  systemctl start kubectl-proxy.service
+fi

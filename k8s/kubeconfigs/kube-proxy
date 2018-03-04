@@ -1,0 +1,21 @@
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority: /etc/kubernetes/tls/ca.crt
+    server: https://192.168.1.165:443
+  name: k8s_pymag
+contexts:
+- context:
+    cluster: k8s_pymag
+    user: kube-proxy
+  name: kube-system
+current-context: kube-system
+kind: Config
+preferences: {}
+users:
+- name: kube-proxy
+  user:
+    as-user-extra: {}
+    client-certificate: /etc/kubernetes/tls/proxy.crt
+    client-key: /etc/kubernetes/tls/proxy.key
+    token: 5EiD2xs95R7JzJOMtPePzKUibSdS4es7

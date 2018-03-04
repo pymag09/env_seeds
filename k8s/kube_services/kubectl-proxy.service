@@ -7,5 +7,9 @@ User=root
 Group=root
 #Environment=
 #Environment=
-WorkingDirectory=/opt/k8s
+WorkingDirectory=/srv/k8s
 ExecStart=/usr/bin/kubectl proxy --accept-hosts="^192.168.1" --address=192.168.1.165
+
+[Install]
+WantedBy=multi-user.target
+Alias=kube-proxy

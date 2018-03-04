@@ -11,7 +11,7 @@ cluster = [{:hostname => "master", :cpu => "2", :mem => "3048", :box => "ubuntu/
            {:hostname => "minion2", :cpu => "1", :mem => "2048", :box => "ubuntu/xenial64", :prov_script => "provisioning/minion.sh", :ip => "192.168.1.167"}
           ]
 
-#cluster = [{:hostname => "master", :cpu => "2", :mem => "3328", :box => "ubuntu/xenial64", :prov_script => "provisioning/master.sh", :ip => "192.168.1.165"}]
+# cluster = [{:hostname => "master", :cpu => "2", :mem => "3328", :box => "ubuntu/xenial64", :prov_script => "provisioning/master.sh", :ip => "192.168.1.165"}]
 
 Vagrant.configure(2) do |config|
   cluster.each do |inst|

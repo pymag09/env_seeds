@@ -1,0 +1,17 @@
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority: /etc/kubernetes/tls/ca.crt
+    server: https://192.168.1.165:443
+  name: k8s_pymag
+contexts: []
+current-context: ""
+kind: Config
+preferences: {}
+users:
+- name: admin
+  user:
+    as-user-extra: {}
+    client-certificate: /etc/kubernetes/tls/user_admin.crt
+    client-key: /etc/kubernetes/tls/user_admin.key
+    token: 8dBx801X2TLGSvdoegRwAjz7ZEs5MFV0

@@ -7,13 +7,13 @@
 ## Human-readable name for this member.
 ## default: host name returned by `hostname`.
 ## This value is referenced as this node's own entries listed in the `-initial-cluster`
-## flag (Ex: `default=http://192.168.1.165:2380` or `default=http://192.168.1.165:2380,default=http://192.168.1.165:7001`).
+## flag (Ex: `default=https://192.168.1.166:2380` or `default=https://192.168.1.166:2380,default=https://192.168.1.166:7001`).
 ## This needs to match the key used in the flag if you're using [static boostrapping](clustering.md#static).
-# ETCD_NAME="hostname"
+ ETCD_NAME="minion1"
 
 ##### -data-dir
 ## Path to the data directory.
-# ETCD_DATA_DIR="/var/lib/etcd/default"
+ ETCD_DATA_DIR="/var/lib/etcd/minion1"
 
 ##### -wal-dir
 ## Path to the dedicated wal directory. If this flag is set, etcd will write the
@@ -41,29 +41,30 @@
 ##### -listen-peer-urls
 ## List of URLs to listen on for peer traffic. This flag tells the etcd to accept
 ## incoming requests from its peers on the specified scheme://IP:port combinations.
-## Scheme can be either http or https. If 0.0.0.0 is specified as the IP, etcd
+## Scheme can be either https or httpss. If 192.168.1.166 is specified as the IP, etcd
 ## listens to the given port on all interfaces. If an IP address is given as
 ## well as a port, etcd will listen on the given port and interface.
 ## Multiple URLs may be used to specify a number of addresses and ports to listen on.
 ## The etcd will respond to requests from any of the listed addresses and ports.
-## example: "http://10.0.0.1:2380"
-## invalid example: "http://example.com:2380" (domain name is invalid for binding)
-## default: "http://192.168.1.165:2380,http://192.168.1.165:7001"
-# ETCD_LISTEN_PEER_URLS="http://192.168.1.165:2380,http://192.168.1.165:7001"
+## example: "https://10.0.0.1:2380"
+## invalid example: "https://example.com:2380" (domain name is invalid for binding)
+## default: "https://192.168.1.166:2380,https://192.168.1.166:7001"
+# ETCD_LISTEN_PEER_URLS="https://192.168.1.166:2380,https://192.168.1.166:7001"
+ ETCD_LISTEN_PEER_URLS="https://192.168.1.166:2380"
 
 ##### -listen-client-urls
 ## List of URLs to listen on for client traffic. This flag tells the etcd to accept
 ## incoming requests from the clients on the specified scheme://IP:port combinations.
-## Scheme can be either http or https. If 0.0.0.0 is specified as the IP, etcd
+## Scheme can be either https or httpss. If 192.168.1.166 is specified as the IP, etcd
 ## listens to the given port on all interfaces. If an IP address is given as
 ## well as a port, etcd will listen on the given port and interface.
 ## Multiple URLs may be used to specify a number of addresses and ports to listen on.
 ## The etcd will respond to requests from any of the listed addresses and ports.
 ## (ADVERTISE_CLIENT_URLS is required when LISTEN_CLIENT_URLS is set explicitly).
-## example: "http://10.0.0.1:2379"
-## invalid example: "http://example.com:2379" (domain name is invalid for binding)
-## default: "http://192.168.1.165:2379,http://192.168.1.165:4001"
- ETCD_LISTEN_CLIENT_URLS="http://0.0.0.0:2379,http://0.0.0.0:4001"
+## example: "https://10.0.0.1:2379"
+## invalid example: "https://example.com:2379" (domain name is invalid for binding)
+## default: "https://192.168.1.166:2379,https://192.168.1.166:4001"
+ ETCD_LISTEN_CLIENT_URLS="https://192.168.1.166:2379,https://127.0.0.1:2379"
 
 ##### -max-snapshots
 ## Maximum number of snapshot files to retain (0 is unlimited)
@@ -93,16 +94,17 @@
 ## These addresses are used for communicating etcd data around the cluster.
 ## At least one must be routable to all cluster members.
 ## These URLs can contain domain names.
-## example: "http://example.com:2380, http://10.0.0.1:2380"
-## default: "http://192.168.1.165:2380,http://192.168.1.165:7001"
- ETCD_INITIAL_ADVERTISE_PEER_URLS="http://192.168.1.165:2380,http://192.168.1.165:7001"
+## example: "https://example.com:2380, https://10.0.0.1:2380"
+## default: "https://192.168.1.166:2380,https://192.168.1.166:7001"
+ ETCD_INITIAL_ADVERTISE_PEER_URLS="https://192.168.1.166:2380"
 
 ##### -initial-cluster
 ## initial cluster configuration for bootstrapping.
 ## The key is the value of the `-name` flag for each node provided.
 ## The default uses `default` for the key because this is the default for the `-name` flag.
-## default: "default=http://192.168.1.165:2380,default=http://192.168.1.165:7001"
- ETCD_INITIAL_CLUSTER="default=http://192.168.1.165:2380,default=http://192.168.1.165:7001"
+## default: "default=https://192.168.1.166:2380,default=https://192.168.1.166:7001"
+# ETCD_INITIAL_CLUSTER="master=https://192.168.1.165:2380,master=https://192.168.1.165:7001,minion1=https://192.168.1.166:2380,minion1=https://192.168.1.166:7001,minion2=https://192.168.1.167:2380,minion2=https://192.168.1.167:7001"
+ ETCD_INITIAL_CLUSTER="master=https://192.168.1.165:2380,minion1=https://192.168.1.166:2380,minion2=https://192.168.1.167:2380"
 
 ##### -initial-cluster-state
 ## Initial cluster state ("new" or "existing"). Set to `new` for all members
@@ -111,6 +113,7 @@
 ## value is set, etcd will attempt to start but fail safely.
 ## default: "new"
 # ETCD_INITIAL_CLUSTER_STATE="existing"
+ ETCD_INITIAL_CLUSTER_STATE="new"
 
 ##### -initial-cluster-token
 ## Initial cluster token for the etcd cluster during bootstrap.
@@ -119,18 +122,18 @@
 ## recommended that you specify a unique initial-cluster-token for the
 ## different clusters.
 ## default: "etcd-cluster"
-# ETCD_INITIAL_CLUSTER_TOKEN="etcd-cluster"
+ ETCD_INITIAL_CLUSTER_TOKEN="etcd-k8s-cluster"
 
 ##### -advertise-client-urls
 ## List of this member's client URLs to advertise to the rest of the cluster.
 ## These URLs can contain domain names.
-## example: "http://example.com:2379, http://10.0.0.1:2379"
-## Be careful if you are advertising URLs such as http://192.168.1.165:2379 from a
+## example: "https://example.com:2379, https://10.0.0.1:2379"
+## Be careful if you are advertising URLs such as https://192.168.1.166:2379 from a
 ## cluster member and are using the proxy feature of etcd. This will cause loops,
 ## because the proxy will be forwarding requests to itself until its resources
 ## (memory, file descriptors) are eventually depleted.
-## default: "http://192.168.1.165:2379,http://192.168.1.165:4001"
- ETCD_ADVERTISE_CLIENT_URLS="http://192.168.1.165:2379,http://192.168.1.165:4001"
+## default: "https://192.168.1.166:2379,https://192.168.1.166:4001"
+ ETCD_ADVERTISE_CLIENT_URLS="https://192.168.1.166:2379"
 
 ##### -discovery
 ## Discovery URL used to bootstrap the cluster.
@@ -196,22 +199,22 @@
 ##### -cert-file
 ## Path to the client server TLS cert file.
 ## default: none
-# ETCD_CERT_FILE=""
+ ETCD_CERT_FILE="/etc/etcd/tls/etcd.crt"
 
 ##### -key-file
 ## Path to the client server TLS key file.
 ## default: none
-# ETCD_KEY_FILE=""
+ ETCD_KEY_FILE="/etc/etcd/tls/etcd.key"
 
 ##### -client-cert-auth
 ## Enable client cert authentication.
 ## default: false
-# ETCD_CLIENT_CERT_AUTH
+ ETCD_CLIENT_CERT_AUTH="true"
 
 ##### -trusted-ca-file
 ## Path to the client server TLS trusted CA key file.
 ## default: none
-# ETCD_TRUSTED_CA_FILE
+ ETCD_TRUSTED_CA_FILE="/etc/etcd/tls/ca.crt"
 
 ##### -peer-ca-file [DEPRECATED]
 ## Path to the peer server TLS CA file. `-peer-ca-file ca.crt` could be replaced
@@ -222,22 +225,22 @@
 ##### -peer-cert-file
 ## Path to the peer server TLS cert file.
 ## default: none
-# ETCD_PEER_CERT_FILE
+ ETCD_PEER_CERT_FILE="/etc/etcd/tls/etcd_peer.crt"
 
 ##### -peer-key-file
 ## Path to the peer server TLS key file.
 ## default: none
-# ETCD_PEER_KEY_FILE
+ ETCD_PEER_KEY_FILE="/etc/etcd/tls/etcd_peer.key"
 
 ##### -peer-client-cert-auth
 ## Enable peer client cert authentication.
 ## default: false
-# ETCD_PEER_CLIENT_CERT_AUTH
+ ETCD_PEER_CLIENT_CERT_AUTH="true"
 
 ##### -peer-trusted-ca-file
 ## Path to the peer server TLS trusted CA file.
 ## default: none
-# ETCD_PEER_TRUSTED_CA_FILE
+ ETCD_PEER_TRUSTED_CA_FILE="/etc/etcd/tls/ca.crt"
 
 ### Logging Flags
 ##### -debug
