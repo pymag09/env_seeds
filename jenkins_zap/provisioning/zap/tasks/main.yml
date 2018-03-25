@@ -22,6 +22,7 @@
   with_items:
     - docker-py
     - jmespath
+    - molecule
   tags:
     - install
     - depend
