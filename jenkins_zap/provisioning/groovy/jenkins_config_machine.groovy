@@ -136,10 +136,8 @@ def configureSonarServer(){
 
 	def triggers = new TriggersConfig(false, false, '')
 	def sonar_inst = new SonarInstallation('docker-sonar',
-																		    'http://192.168.1.165:9000', '5.3', '',
-																		    '', '', '',
-																		    '', '', triggers,
-																				'', '', '')
+	'http://192.168.1.165:9000', '', '5.3', '',
+	triggers, '')
 
 	def sonar_installations = desc_sonar.getInstallations()
 	sonar_installations += sonar_inst
